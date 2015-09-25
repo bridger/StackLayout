@@ -1,5 +1,5 @@
 PODS:
-  - StackLayout (0.1.0)
+  - StackLayout (0.9.0)
 
 DEPENDENCIES:
   - StackLayout (from `../`)
@@ -9,6 +9,6 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  StackLayout: 8a35332f68ce09c4c911cf895fefdf28309d5802
+  StackLayout: d397a7b781a58ccb25e5ab0b3b70de87b0fede40
 
 COCOAPODS: 0.38.2
