@@ -61,8 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) CGFloat minorLeadingMargin;
 @property (nonatomic) CGFloat minorTrailingMargin;
 
-@property (nonatomic) ALAlignment majorAlignment;
-@property (nonatomic) ALAlignment minorAlignment;
+@property (nonatomic) SLAlignment majorAlignment;
+@property (nonatomic) SLAlignment minorAlignment;
 
 
 
@@ -358,7 +358,7 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (void)setMajorAlignment:(ALAlignment)majorAlignment
+- (void)setMajorAlignment:(SLAlignment)majorAlignment
 {
     if (_majorAlignment != majorAlignment) {
         _majorAlignment = majorAlignment;
@@ -374,23 +374,23 @@ NS_ASSUME_NONNULL_BEGIN
         
         NSMutableArray *constraints = [NSMutableArray array];
         switch (self.majorAlignment) {
-            case ALAlignmentNone: {
+            case SLAlignmentNone: {
                 // No constraints to make
                 break;
             }
-            case ALAlignmentLeading: {
+            case SLAlignmentLeading: {
                 // leadingView.leading = superview.leading
                 [constraints addObject:[self.leadingView sl_constraintAligningAttribute:self.majorLeadingAttribute withView:self.superview]];
                 
                 break;
             }
-            case ALAlignmentTrailing: {
+            case SLAlignmentTrailing: {
                 // superview.trailing = trailingView.trailing
                 [constraints addObject:[self.superview sl_constraintAligningAttribute:self.majorTrailingAttribute withView:self.trailingView]];
                 
                 break;
             }
-            case ALAlignmentFill: {
+            case SLAlignmentFill: {
                 // Make both the leading and trailing subviews try to hug the edges
                 
                 // leadingView.leading = superview.leading
@@ -399,7 +399,7 @@ NS_ASSUME_NONNULL_BEGIN
                 [constraints addObject:[self.superview sl_constraintAligningAttribute:self.majorTrailingAttribute withView:self.trailingView]];
                 break;
             }
-            case ALAlignmentCenter: {
+            case SLAlignmentCenter: {
                 // This one is tricky. We place hidden "helper" views on either side of the subviews and constrain them to have equal widths
                 UIView *helperLeadingView = [[UIView alloc] init];
                 helperLeadingView.translatesAutoresizingMaskIntoConstraints = false;
@@ -437,7 +437,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-- (void)setMinorAlignment:(ALAlignment)minorAlignment
+- (void)setMinorAlignment:(SLAlignment)minorAlignment
 {
     if (_minorAlignment != minorAlignment) {
         _minorAlignment = minorAlignment;
@@ -449,11 +449,11 @@ NS_ASSUME_NONNULL_BEGIN
         
         NSMutableArray *constraints = [NSMutableArray array];
         switch (self.minorAlignment) {
-            case ALAlignmentNone: {
+            case SLAlignmentNone: {
                 // No constraints to make
                 break;
             }
-            case ALAlignmentLeading: {
+            case SLAlignmentLeading: {
                 for (UIView *subview in self.views) {
                     // subview.leading = superview.leading
                     [constraints addObject:[subview sl_constraintAligningAttribute:self.minorLeadingAttribute withView:self.superview]];
@@ -461,7 +461,7 @@ NS_ASSUME_NONNULL_BEGIN
                 
                 break;
             }
-            case ALAlignmentTrailing: {
+            case SLAlignmentTrailing: {
                 for (UIView *subview in self.views) {
                     // superview.trailing = subview.trailing
                     [constraints addObject:[self.superview sl_constraintAligningAttribute:self.minorTrailingAttribute withView:subview]];
@@ -469,7 +469,7 @@ NS_ASSUME_NONNULL_BEGIN
                 
                 break;
             }
-            case ALAlignmentFill: {
+            case SLAlignmentFill: {
                 // Make both the leading and trailing subviews try to hug the edges
                 
                 for (UIView *subview in self.views) {
@@ -481,7 +481,7 @@ NS_ASSUME_NONNULL_BEGIN
                 
                 break;
             }
-            case ALAlignmentCenter: {
+            case SLAlignmentCenter: {
                 for (UIView *subview in self.views) {
                     // superview.center = subview.center
                     [constraints addObject:[self.superview sl_constraintAligningAttribute:self.minorCenterAttribute withView:subview]];
@@ -504,12 +504,12 @@ NS_ASSUME_NONNULL_BEGIN
 {
     if (_alignmentPriority != alignmentPriority) {
         // Trigger a rebuild of these constraints by setting and unsetting them
-        ALAlignment majorAlignment = self.majorAlignment;
-        self.majorAlignment = ALAlignmentNone;
+        SLAlignment majorAlignment = self.majorAlignment;
+        self.majorAlignment = SLAlignmentNone;
         self.majorAlignment = majorAlignment;
         
-        ALAlignment minorAlignment = self.minorAlignment;
-        self.minorAlignment = ALAlignmentNone;
+        SLAlignment minorAlignment = self.minorAlignment;
+        self.minorAlignment = SLAlignmentNone;
         self.minorAlignment = minorAlignment;
     }
     return self;
@@ -637,22 +637,22 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (instancetype)setHorizontalAlignment:(ALAlignment)alignment
+- (instancetype)setHorizontalAlignment:(SLAlignment)alignment
 {
     self.majorAlignment = alignment;
     return self;
 }
-- (ALAlignment)horizontalAlignment
+- (SLAlignment)horizontalAlignment
 {
     return self.majorAlignment;
 }
 
-- (instancetype)setVerticalAlignment:(ALAlignment)alignment
+- (instancetype)setVerticalAlignment:(SLAlignment)alignment
 {
     self.minorAlignment = alignment;
     return self;
 }
-- (ALAlignment)verticalAlignment
+- (SLAlignment)verticalAlignment
 {
     return self.minorAlignment;
 }
@@ -782,22 +782,22 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (instancetype)setHorizontalAlignment:(ALAlignment)alignment
+- (instancetype)setHorizontalAlignment:(SLAlignment)alignment
 {
     self.minorAlignment = alignment;
     return self;
 }
-- (ALAlignment)horizontalAlignment
+- (SLAlignment)horizontalAlignment
 {
     return self.minorAlignment;
 }
 
-- (instancetype)setVerticalAlignment:(ALAlignment)alignment
+- (instancetype)setVerticalAlignment:(SLAlignment)alignment
 {
     self.majorAlignment = alignment;
     return self;
 }
-- (ALAlignment)verticalAlignment
+- (SLAlignment)verticalAlignment
 {
     return self.majorAlignment;
 }

@@ -4,18 +4,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, ALAlignment) {
-    ALAlignmentNone,
+typedef NS_ENUM(NSInteger, SLAlignment) {
+    SLAlignmentNone,
     
-    ALAlignmentLeading,
-    ALAlignmentTop = ALAlignmentLeading,
+    SLAlignmentLeading,
+    SLAlignmentTop = SLAlignmentLeading,
     
-    ALAlignmentTrailing,
-    ALAlignmentBottom = ALAlignmentTrailing,
+    SLAlignmentTrailing,
+    SLAlignmentBottom = SLAlignmentTrailing,
     
-    ALAlignmentFill,
+    SLAlignmentFill,
     
-    ALAlignmentCenter
+    SLAlignmentCenter
 };
 
 
@@ -29,13 +29,13 @@ typedef NS_ENUM(NSInteger, ALAlignment) {
  side of the subviews to enforce the centering.
  */
 
-// Defaults to ALAlignmentNone, which creates no constraints
-- (instancetype)setVerticalAlignment:(ALAlignment)alignment;
-@property (nonatomic, readonly) ALAlignment verticalAlignment;
+// Defaults to SLAlignmentNone, which creates no constraints
+- (instancetype)setVerticalAlignment:(SLAlignment)alignment;
+@property (nonatomic, readonly) SLAlignment verticalAlignment;
 
-// Defaults to ALAlignmentNone, which creates no constraints
-- (instancetype)setHorizontalAlignment:(ALAlignment)alignment;
-@property (nonatomic, readonly) ALAlignment horizontalAlignment;
+// Defaults to SLAlignmentNone, which creates no constraints
+- (instancetype)setHorizontalAlignment:(SLAlignment)alignment;
+@property (nonatomic, readonly) SLAlignment horizontalAlignment;
 
 /* This is the priority that all alignment constraints use. It defaults to UILayoutPriorityDefaultHigh. This
  is so views will pull in the aligned direction, but will not override margin constraints (which are required).
