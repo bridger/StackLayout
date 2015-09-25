@@ -25,6 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
 // the constraints are set to be active.
 - (NSArray<NSLayoutConstraint *> *)sl_constraintsLayoutEqualToView:(UIView *)view active:(BOOL)active;
 
+// Creates constraints that width >= size.width and height >= size.height. If size.width or size.height < 0
+// then the corresponding constraint will not be created. If active is true the constraints are set to be active.
+- (NSArray<NSLayoutConstraint *> *)sl_constraintsForMinimumSize:(CGSize)size active:(BOOL)active;
+
 @end
 
 NS_ASSUME_NONNULL_END

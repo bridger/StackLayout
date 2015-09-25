@@ -69,6 +69,23 @@ NS_ASSUME_NONNULL_BEGIN
     return constraints;
 }
 
+- (NSArray<NSLayoutConstraint *> *)sl_constraintsForMinimumSize:(CGSize)size active:(BOOL)active
+{
+    NSMutableArray *constraints = [NSMutableArray array];
+    if (size.width >= 0) {
+        [constraints addObject:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:size.width]];
+    }
+    if (size.height >= 0) {
+        [constraints addObject:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:size.height]];
+    }
+    if (active) {
+        for (NSLayoutConstraint *constraint in constraints) {
+            constraint.active = true;
+        }
+    }
+    return constraints;
+}
+
 @end
 
 NS_ASSUME_NONNULL_END
