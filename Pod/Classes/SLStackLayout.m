@@ -5,7 +5,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SLStackLayout ()
+@interface SLStackLayoutBase ()
 
 @property (readonly) BOOL isHorizontal;
 @property (readonly) NSLayoutAttribute majorLeadingAttribute;
@@ -45,13 +45,23 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) ALAlignment majorAlignment;
 @property (nonatomic) ALAlignment minorAlignment;
 
+
+
 // These are all the public properties that have just been marked readwrite
 @property (readwrite) NSArray<UIView *> *views;
 @property (readwrite, weak, nullable) UIView *superview;
 
+// These are implemented by this base class but are only exposed in the two subclasses
+- (instancetype)setSpacing:(CGFloat)spacing;
+@property (nonatomic, readonly) CGFloat spacing;
+- (instancetype)setAlignmentPriority:(UILayoutPriority)priority;
+@property (nonatomic, readonly) UILayoutPriority alignmentPriority;
+- (instancetype)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement;
+@property(nonatomic, getter=isLayoutMarginsRelativeArrangement, readonly) BOOL layoutMarginsRelativeArrangement;
+
 @end
 
-@implementation SLStackLayout
+@implementation SLStackLayoutBase
 
 - (BOOL)isHorizontal
 {
@@ -554,6 +564,12 @@ NS_ASSUME_NONNULL_BEGIN
 {
     return self.majorTrailingMargin;
 }
+- (instancetype)setHorizontalMargins:(CGFloat)margin
+{
+    self.majorTrailingMargin = margin;
+    self.majorLeadingMargin = margin;
+    return self;
+}
 
 - (instancetype)setTopMargin:(CGFloat)margin
 {
@@ -573,6 +589,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGFloat)bottomMargin
 {
     return self.minorTrailingMargin;
+}
+- (instancetype)setVerticalMargins:(CGFloat)margin
+{
+    self.minorTrailingMargin = margin;
+    self.minorLeadingMargin = margin;
+    return self;
 }
 
 - (instancetype)setHorizontalAlignment:(ALAlignment)alignment
@@ -686,6 +708,13 @@ NS_ASSUME_NONNULL_BEGIN
     return self.minorTrailingMargin;
 }
 
+- (instancetype)setHorizontalMargins:(CGFloat)margin
+{
+    self.minorTrailingMargin = margin;
+    self.minorLeadingMargin = margin;
+    return self;
+}
+
 - (instancetype)setTopMargin:(CGFloat)margin
 {
     self.majorLeadingMargin = margin;
@@ -704,6 +733,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGFloat)bottomMargin
 {
     return self.majorTrailingMargin;
+}
+
+- (instancetype)setVerticalMargins:(CGFloat)margin
+{
+    self.majorTrailingMargin = margin;
+    self.majorLeadingMargin = margin;
+    return self;
 }
 
 - (instancetype)setHorizontalAlignment:(ALAlignment)alignment

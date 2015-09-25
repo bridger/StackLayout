@@ -19,15 +19,23 @@ typedef NS_ENUM(NSInteger, ALAlignment) {
 };
 
 
+@protocol SLStackLayout <NSObject>
 
-@interface SLStackLayout : NSObject
+/*
+ ************************************ Alignment ************************************
+ The alignment pulls subviews to the edges of the superview with a certain priority. Use the fill alignment
+ to duplicate behavior of UIStackView.
+ When you use the center alignment for the major axis of alignment, two hidden subviews are added to either
+ side of the subviews to enforce the centering.
+ */
 
-@property (readonly) NSArray<UIView *> *views;
-@property (readonly, weak, nullable) UIView * superview;
+// Defaults to ALAlignmentNone, which creates no constraints
+- (instancetype)setVerticalAlignment:(ALAlignment)alignment;
+@property (nonatomic, readonly) ALAlignment verticalAlignment;
 
-// ...[firstSubview]-spacing-[secondSubview]-spacing-[thirdSubview]...
-- (instancetype)setSpacing:(CGFloat)spacing;
-@property (nonatomic, readonly) CGFloat spacing;
+// Defaults to ALAlignmentNone, which creates no constraints
+- (instancetype)setHorizontalAlignment:(ALAlignment)alignment;
+@property (nonatomic, readonly) ALAlignment horizontalAlignment;
 
 /* This is the priority that all alignment constraints use. It defaults to UILayoutPriorityDefaultHigh. This
  is so views will pull in the aligned direction, but will not override margin constraints (which are required).
@@ -35,12 +43,63 @@ typedef NS_ENUM(NSInteger, ALAlignment) {
 - (instancetype)setAlignmentPriority:(UILayoutPriority)priority;
 @property (nonatomic, readonly) UILayoutPriority alignmentPriority;
 
+
+/*
+ ************************************ Spacing ************************************
+ All subviews will have a required space between them.
+ */
+
+// ...[firstSubview]-spacing-[secondSubview]-spacing-[thirdSubview]...
+- (instancetype)setSpacing:(CGFloat)spacing;
+@property (nonatomic, readonly) CGFloat spacing;
+
+
+/*
+ ************************************ Margins ************************************
+ The margins define a region on the edges of the superview where the subviews will not enter. The subviews
+ might not necessarily go up to the margins, depending on the alignment. To guarantee that subviews go all
+ the way to the margins use the fill alignment.
+ */
+
+// V:|-(>=margin)-[subview]-....
+- (instancetype)setTopMargin:(CGFloat)margin;
+@property (nonatomic, readonly) CGFloat topMargin;
+
+// V:...[subview]-(>=margin)-|
+- (instancetype)setBottomMargin:(CGFloat)margin;
+@property (nonatomic, readonly) CGFloat bottomMargin;
+
+// A convenience to set both top and bottom margins.
+- (instancetype)setVerticalMargins:(CGFloat)margin;
+
+// H:|-(>=margin)-[subview]
+- (instancetype)setLeadingMargin:(CGFloat)margin;
+@property (nonatomic, readonly) CGFloat leadingMargin;
+
+// H:[subview]-(>=margin)-|
+- (instancetype)setTrailingMargin:(CGFloat)margin;
+@property (nonatomic, readonly) CGFloat trailingMargin;
+
+// A convenience to set both leading and trailing margins.
+- (instancetype)setHorizontalMargins:(CGFloat)margin;
+
 /* Uses margin layout attributes from the superview for edge constraints where applicable. This is similar
- to UIStackView.
+ to UIStackView's property of the same name.
  Defaults to NO.
  */
 - (instancetype)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement;
 @property(nonatomic, getter=isLayoutMarginsRelativeArrangement, readonly) BOOL layoutMarginsRelativeArrangement;
+
+
+@end
+
+
+
+
+@interface SLStackLayoutBase : NSObject
+
+@property (readonly) NSArray<UIView *> *views;
+@property (readonly, weak, nullable) UIView * superview;
 
 // Instead of using this directly, use UIView's -addSubviewsWithVerticalLayout: or -addSubviewsWithHorizontalLayout:
 // If you do call this directly then all subviews should already be added to the superview. The subviews should all have
@@ -51,74 +110,13 @@ typedef NS_ENUM(NSInteger, ALAlignment) {
 
 
 
-
-
-@interface SLHorizontalStackLayout : SLStackLayout
-
-// Defaults to ALAlignmentNone, which creates no constraints
-- (instancetype)setHorizontalAlignment:(ALAlignment)alignment;
-@property (nonatomic, readonly) ALAlignment horizontalAlignment;
-
-// Defaults to ALAlignmentNone, which creates no constraints
-- (instancetype)setVerticalAlignment:(ALAlignment)alignment;
-@property (nonatomic, readonly) ALAlignment verticalAlignment;
-
-// H:|-margin-[firstSubview]-....
-- (instancetype)setLeadingMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat leadingMargin;
-
-// H:...[lastSubview]-margin-|
-- (instancetype)setTrailingMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat trailingMargin;
-
-// V:|-margin-[firstSubview]
-// V:|-margin-[secondSubview]
-// ...
-- (instancetype)setTopMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat topMargin;
-
-// V:[firstSubview]-margin-|
-// V:[secondSubview]-margin-|
-// ...
-- (instancetype)setBottomMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat bottomMargin;
+@interface SLHorizontalStackLayout : SLStackLayoutBase <SLStackLayout>
 
 @end
 
 
 
-
-
-
-@interface SLVerticalStackLayout : SLStackLayout
-
-// Defaults to ALAlignmentNone, which creates no constraints
-- (instancetype)setVerticalAlignment:(ALAlignment)alignment;
-@property (nonatomic, readonly) ALAlignment verticalAlignment;
-
-// Defaults to ALAlignmentNone, which creates no constraints
-- (instancetype)setHorizontalAlignment:(ALAlignment)alignment;
-@property (nonatomic, readonly) ALAlignment horizontalAlignment;
-
-// V:|-margin-[firstSubview]-....
-- (instancetype)setTopMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat topMargin;
-
-// V:...[lastSubview]-margin-|
-- (instancetype)setBottomMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat bottomMargin;
-
-// H:|-margin-[firstSubview]
-// H:|-margin-[secondSubview]
-// ...
-- (instancetype)setLeadingMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat leadingMargin;
-
-// H:[firstSubview]-margin-|
-// H:[secondSubview]-margin-|
-// ...
-- (instancetype)setTrailingMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat trailingMargin;
+@interface SLVerticalStackLayout : SLStackLayoutBase <SLStackLayout>
 
 @end
 
