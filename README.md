@@ -1,6 +1,5 @@
 # StackLayout
 
-[![CI Status](http://img.shields.io/travis/Bridger Maxwell/StackLayout.svg?style=flat)](https://travis-ci.org/Bridger Maxwell/StackLayout)
 [![Version](https://img.shields.io/cocoapods/v/StackLayout.svg?style=flat)](http://cocoapods.org/pods/StackLayout)
 [![License](https://img.shields.io/cocoapods/l/StackLayout.svg?style=flat)](http://cocoapods.org/pods/StackLayout)
 [![Platform](https://img.shields.io/cocoapods/p/StackLayout.svg?style=flat)](http://cocoapods.org/pods/StackLayout)

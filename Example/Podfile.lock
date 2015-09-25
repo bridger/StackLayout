@@ -1,0 +1,14 @@
+PODS:
+  - StackLayout (0.1.0)
+
+DEPENDENCIES:
+  - StackLayout (from `../`)
+
+EXTERNAL SOURCES:
+  StackLayout:
+    :path: ../
+
+SPEC CHECKSUMS:
+  StackLayout: 8a35332f68ce09c4c911cf895fefdf28309d5802
+
+COCOAPODS: 0.38.2
