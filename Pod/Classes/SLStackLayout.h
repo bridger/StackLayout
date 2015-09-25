@@ -53,6 +53,12 @@ typedef NS_ENUM(NSInteger, ALAlignment) {
 - (instancetype)setSpacing:(CGFloat)spacing;
 @property (nonatomic, readonly) CGFloat spacing;
 
+/* This is the priority that all spacing constraints use. It defaults to required. You can make it non-required
+ and add additional constraints to create spacing adjustments.
+ Another strategy to create variable spacings is to insert invisible spacer views.
+ */
+- (instancetype)setSpacingPriority:(UILayoutPriority)priority;
+@property (nonatomic, readonly) UILayoutPriority spacingPriority;
 
 /*
  ************************************ Margins ************************************

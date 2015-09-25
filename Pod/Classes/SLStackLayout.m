@@ -54,6 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
 // These are implemented by this base class but are only exposed in the two subclasses
 - (instancetype)setSpacing:(CGFloat)spacing;
 @property (nonatomic, readonly) CGFloat spacing;
+- (instancetype)setSpacingPriority:(UILayoutPriority)priority;
+@property (nonatomic, readonly) UILayoutPriority spacingPriority;
 - (instancetype)setAlignmentPriority:(UILayoutPriority)priority;
 @property (nonatomic, readonly) UILayoutPriority alignmentPriority;
 - (instancetype)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement;
@@ -167,24 +169,43 @@ NS_ASSUME_NONNULL_BEGIN
         // The alignment priority is high, but not required. This is so it very strongly tries to align,
         // but won't override the margin constraints (which are required)
         _alignmentPriority = UILayoutPriorityDefaultHigh;
+        _spacingPriority = UILayoutPriorityRequired;
         
-        NSMutableArray *spacingConstraints = [NSMutableArray new];
-        UIView *previousSubview = nil;
-        for (UIView *subview in self.views) {
-            if (previousSubview) {
-                // subview.leading = previousSubview.trailing + spacing
-                NSLayoutConstraint *spaceConstraint = [previousSubview sl_constraintWithSpace:self.spacing followedByView:subview isHorizontal:self.isHorizontal];
-                [spacingConstraints addObject:spaceConstraint];
-                spaceConstraint.active = true;
-            }
-            previousSubview = subview;
-        }
-        self.spacingConstraints = spacingConstraints;
-        
+        [self rebuildSpacingConstraints];
         [self rebuildMajorLeadingConstraint];
         [self rebuildMajorTrailingConstraint];
         [self rebuildMinorLeadingConstraints];
         [self rebuildMinorTrailingConstraints];
+    }
+    return self;
+}
+
+- (void)rebuildSpacingConstraints
+{
+    for (NSLayoutConstraint *constraint in self.spacingConstraints) {
+        constraint.active = false;
+    }
+    
+    NSMutableArray *spacingConstraints = [NSMutableArray new];
+    UIView *previousSubview = nil;
+    for (UIView *subview in self.views) {
+        if (previousSubview) {
+            // subview.leading = previousSubview.trailing + spacing
+            NSLayoutConstraint *spaceConstraint = [previousSubview sl_constraintWithSpace:self.spacing followedByView:subview isHorizontal:self.isHorizontal];
+            spaceConstraint.priority = self.spacingPriority;
+            [spacingConstraints addObject:spaceConstraint];
+            spaceConstraint.active = true;
+        }
+        previousSubview = subview;
+    }
+    self.spacingConstraints = spacingConstraints;
+}
+
+- (instancetype)setSpacingPriority:(UILayoutPriority)priority
+{
+    if (_spacingPriority != priority) {
+        _spacingPriority = priority;
+        [self rebuildSpacingConstraints];
     }
     return self;
 }
