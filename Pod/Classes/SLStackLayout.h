@@ -21,8 +21,8 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 
 @protocol SLStackLayout <NSObject>
 
+#pragma mark Alignment
 /*
- ************************************ Alignment ************************************
  The alignment pulls subviews to the edges of the superview with a certain priority. Use the fill alignment
  to duplicate behavior of UIStackView.
  When you use the center alignment for the major axis of alignment, two hidden subviews are added to either
@@ -43,9 +43,8 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 - (instancetype)setAlignmentPriority:(UILayoutPriority)priority;
 @property (nonatomic, readonly) UILayoutPriority alignmentPriority;
 
-
+#pragma mark Spacing
 /*
- ************************************ Spacing ************************************
  All subviews will have a required space between them.
  */
 
@@ -60,8 +59,9 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 - (instancetype)setSpacingPriority:(UILayoutPriority)priority;
 @property (nonatomic, readonly) UILayoutPriority spacingPriority;
 
+
+#pragma mark Margins
 /*
- ************************************ Margins ************************************
  The margins define a region on the edges of the superview where the subviews will not enter. The subviews
  might not necessarily go up to the margins, depending on the alignment. To guarantee that subviews go all
  the way to the margins use the fill alignment.
@@ -96,6 +96,14 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 - (instancetype)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement;
 @property(nonatomic, getter=isLayoutMarginsRelativeArrangement, readonly) BOOL layoutMarginsRelativeArrangement;
 
+#pragma mark Other
+
+/* If this is true then any subview which implements setPreferredMaxLayoutWidth: will have that property set
+ to the actual layout width when layoutSubviews is called on the superview.
+ Defaults to YES.
+ */
+- (instancetype)setAdjustsPreferredMaxLayoutWidthOnSubviews:(BOOL)adjustValues;
+@property (nonatomic, readonly) BOOL adjustsPreferredMaxLayoutWidthOnSubviews;
 
 @end
 
@@ -107,10 +115,17 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 @property (readonly) NSArray<UIView *> *views;
 @property (readonly, weak, nullable) UIView * superview;
 
-// Instead of using this directly, use UIView's -addSubviewsWithVerticalLayout: or -addSubviewsWithHorizontalLayout:
-// If you do call this directly then all subviews should already be added to the superview. The subviews should all have
-// translatesAutoresizingMaskIntoConstraints set to false. It must be called on a subclass.
+/* Instead of using this directly, use UIView's -addSubviewsWithVerticalLayout: or -addSubviewsWithHorizontalLayout:
+ If you do call this directly then all subviews should already be added to the superview. The subviews should all have
+ translatesAutoresizingMaskIntoConstraints set to false. It must be called on a subclass.
+ */
 - (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview;
+
+/* This is called when the superview's layoutSubviews is invoked (which depends on method swizzling). This
+ is when setPreferredMaxLayoutWidth: will be called on subviews if adjustsPreferredMaxLayoutWidthOnSubviews is
+ true.
+ */
+- (void)subviewsLaidOut;
 
 @end
 

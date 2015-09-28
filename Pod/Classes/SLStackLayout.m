@@ -79,6 +79,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UILayoutPriority alignmentPriority;
 - (instancetype)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement;
 @property(nonatomic, getter=isLayoutMarginsRelativeArrangement, readonly) BOOL layoutMarginsRelativeArrangement;
+- (instancetype)setAdjustsPreferredMaxLayoutWidthOnSubviews:(BOOL)adjustValues;
+@property (nonatomic, readonly) BOOL adjustsPreferredMaxLayoutWidthOnSubviews;
 
 @end
 
@@ -189,6 +191,7 @@ NS_ASSUME_NONNULL_BEGIN
         // but won't override the margin constraints (which are required)
         _alignmentPriority = UILayoutPriorityDefaultHigh;
         _spacingPriority = UILayoutPriorityRequired;
+        _adjustsPreferredMaxLayoutWidthOnSubviews = YES;
         
         [self rebuildSpacingConstraints];
         [self rebuildMajorLeadingConstraint];
@@ -513,6 +516,27 @@ NS_ASSUME_NONNULL_BEGIN
         self.minorAlignment = minorAlignment;
     }
     return self;
+}
+
+- (instancetype)setAdjustsPreferredMaxLayoutWidthOnSubviews:(BOOL)adjustValues
+{
+    _adjustsPreferredMaxLayoutWidthOnSubviews = adjustValues;
+    return self;
+}
+
+- (void)subviewsLaidOut
+{
+    if (!self.adjustsPreferredMaxLayoutWidthOnSubviews) {
+        return;
+    }
+    for (UIView *subview in self.views) {
+        if ([subview respondsToSelector:@selector(setPreferredMaxLayoutWidth:)]) {
+            CGFloat layoutWidth = subview.frame.size.width;
+            [(id)subview setPreferredMaxLayoutWidth:layoutWidth];
+            
+            [subview updateConstraintsIfNeeded];
+        }
+    }
 }
 
 @end
