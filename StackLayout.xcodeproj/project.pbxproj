@@ -1,0 +1,257 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AEF50FC21BBC70A00013B603 /* SLStackLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = AEF50FBF1BBC70A00013B603 /* SLStackLayout.m */; settings = {ASSET_TAGS = (); }; };
+		AEF50FC31BBC70A00013B603 /* UIView+StackLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = AEF50FC11BBC70A00013B603 /* UIView+StackLayout.m */; settings = {ASSET_TAGS = (); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AEF50FAD1BBC70340013B603 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		AEF50FAF1BBC70340013B603 /* libStackLayout.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStackLayout.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		AEF50FBE1BBC70A00013B603 /* SLStackLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStackLayout.h; sourceTree = "<group>"; };
+		AEF50FBF1BBC70A00013B603 /* SLStackLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStackLayout.m; sourceTree = "<group>"; };
+		AEF50FC01BBC70A00013B603 /* UIView+StackLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+StackLayout.h"; sourceTree = "<group>"; };
+		AEF50FC11BBC70A00013B603 /* UIView+StackLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+StackLayout.m"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AEF50FAC1BBC70340013B603 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AEF50FA61BBC70340013B603 = {
+			isa = PBXGroup;
+			children = (
+				AEF50FBC1BBC70A00013B603 /* StackLayout */,
+				AEF50FB01BBC70340013B603 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AEF50FB01BBC70340013B603 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AEF50FAF1BBC70340013B603 /* libStackLayout.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AEF50FBC1BBC70A00013B603 /* StackLayout */ = {
+			isa = PBXGroup;
+			children = (
+				AEF50FBE1BBC70A00013B603 /* SLStackLayout.h */,
+				AEF50FBF1BBC70A00013B603 /* SLStackLayout.m */,
+				AEF50FC01BBC70A00013B603 /* UIView+StackLayout.h */,
+				AEF50FC11BBC70A00013B603 /* UIView+StackLayout.m */,
+			);
+			name = StackLayout;
+			path = Pod/StackLayout;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AEF50FAE1BBC70340013B603 /* StackLayout */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AEF50FB81BBC70340013B603 /* Build configuration list for PBXNativeTarget "StackLayout" */;
+			buildPhases = (
+				AEF50FAB1BBC70340013B603 /* Sources */,
+				AEF50FAC1BBC70340013B603 /* Frameworks */,
+				AEF50FAD1BBC70340013B603 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StackLayout;
+			productName = StackLayout;
+			productReference = AEF50FAF1BBC70340013B603 /* libStackLayout.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AEF50FA71BBC70340013B603 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = "Bridger Maxwell";
+				TargetAttributes = {
+					AEF50FAE1BBC70340013B603 = {
+						CreatedOnToolsVersion = 7.0;
+					};
+				};
+			};
+			buildConfigurationList = AEF50FAA1BBC70340013B603 /* Build configuration list for PBXProject "StackLayout" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = AEF50FA61BBC70340013B603;
+			productRefGroup = AEF50FB01BBC70340013B603 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AEF50FAE1BBC70340013B603 /* StackLayout */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AEF50FAB1BBC70340013B603 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AEF50FC21BBC70A00013B603 /* SLStackLayout.m in Sources */,
+				AEF50FC31BBC70A00013B603 /* UIView+StackLayout.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AEF50FB61BBC70340013B603 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		AEF50FB71BBC70340013B603 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AEF50FB91BBC70340013B603 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		AEF50FBA1BBC70340013B603 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AEF50FAA1BBC70340013B603 /* Build configuration list for PBXProject "StackLayout" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AEF50FB61BBC70340013B603 /* Debug */,
+				AEF50FB71BBC70340013B603 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AEF50FB81BBC70340013B603 /* Build configuration list for PBXNativeTarget "StackLayout" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AEF50FB91BBC70340013B603 /* Debug */,
+				AEF50FBA1BBC70340013B603 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AEF50FA71BBC70340013B603 /* Project object */;
+}
