@@ -30,9 +30,32 @@ NS_ASSUME_NONNULL_BEGIN
     return layout;
 }
 
+- (void)removeSubviewsInLayout:(SLStackLayoutBase *)layout
+{
+    if (!layout) {
+        return;
+    }
+    NSArray *layouts = [self sl_installedLayouts];
+    if ([layouts containsObject:layout]) {
+        for (UIView *subview in layout.views) {
+            [subview removeFromSuperview];
+        }
+        
+        NSMutableArray *mutableLayouts = [layouts mutableCopy];
+        [mutableLayouts removeObject:layout];
+        
+        [self sl_setInstalledLayouts:mutableLayouts];
+    }
+}
+
 - (NSArray * _Nullable)sl_installedLayouts
 {
     return objc_getAssociatedObject(self, @selector((sl_installedLayouts)));
+}
+
+- (void)sl_setInstalledLayouts:(NSArray *)layouts
+{
+    objc_setAssociatedObject(self, @selector(sl_installedLayouts), layouts, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (void)installStackLayout:(SLStackLayoutBase *)stackLayout
@@ -68,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
     layouts = [layouts arrayByAddingObject:stackLayout];
     
-    objc_setAssociatedObject(self, @selector(sl_installedLayouts), layouts, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self sl_setInstalledLayouts:layouts];
 }
 
 // This is a swizzled version of layoutSubviews that allows the layout objects to get a chance to do adjustments

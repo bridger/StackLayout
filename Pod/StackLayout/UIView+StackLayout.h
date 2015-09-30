@@ -10,6 +10,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (SLHorizontalStackLayout *)addSubviewsWithHorizontalLayout:(NSArray<UIView *> *)subviews;
 - (SLVerticalStackLayout *)addSubviewsWithVerticalLayout:(NSArray<UIView *> *)subviews;
 
+- (void)removeSubviewsInLayout:(SLStackLayoutBase *)layout;
+
 @end
 
 NS_ASSUME_NONNULL_END
