@@ -100,6 +100,8 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 
 /* If this is true then any subview which implements setPreferredMaxLayoutWidth: will have that property set
  to the actual layout width when layoutSubviews is called on the superview.
+ It is illegal for this to cause a change of height in the containing view, so this property should be turned
+ off and managed from a higher view level if that is true. It may trigger an assert in layoutSubviews.
  Defaults to YES.
  */
 - (instancetype)setAdjustsPreferredMaxLayoutWidthOnSubviews:(BOOL)adjustValues;
