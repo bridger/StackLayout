@@ -96,6 +96,11 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 - (instancetype)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement;
 @property(nonatomic, getter=isLayoutMarginsRelativeArrangement, readonly) BOOL layoutMarginsRelativeArrangement;
 
+/* This is the priority that all margin constraints use. It defaults to required.
+ */
+- (instancetype)setMarginsPriority:(UILayoutPriority)priority;
+@property (nonatomic, readonly) UILayoutPriority marginsPriority;
+
 #pragma mark Other
 
 /* If this is true then any subview which implements setPreferredMaxLayoutWidth: will have that property set

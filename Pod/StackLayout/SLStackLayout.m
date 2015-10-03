@@ -81,6 +81,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, getter=isLayoutMarginsRelativeArrangement, readonly) BOOL layoutMarginsRelativeArrangement;
 - (instancetype)setAdjustsPreferredMaxLayoutWidthOnSubviews:(BOOL)adjustValues;
 @property (nonatomic, readonly) BOOL adjustsPreferredMaxLayoutWidthOnSubviews;
+- (instancetype)setMarginsPriority:(UILayoutPriority)priority;
+@property (nonatomic, readonly) UILayoutPriority marginsPriority;
 
 @end
 
@@ -191,6 +193,7 @@ NS_ASSUME_NONNULL_BEGIN
         // but won't override the margin constraints (which are required)
         _alignmentPriority = UILayoutPriorityDefaultHigh + 10;
         _spacingPriority = UILayoutPriorityRequired;
+        _marginsPriority = UILayoutPriorityRequired;
         _adjustsPreferredMaxLayoutWidthOnSubviews = YES;
         
         [self rebuildSpacingConstraints];
@@ -242,6 +245,7 @@ NS_ASSUME_NONNULL_BEGIN
     
     // leadingView.leading >= superview.leadingMargin + margin
     NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.leadingView attribute:self.majorLeadingAttribute relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.superview attribute:marginAttribute multiplier:1.0 constant:self.majorLeadingMargin];
+    constraint.priority = self.marginsPriority;
     constraint.active = true;
     
     self.majorLeadingMarginConstraint = constraint;
@@ -257,6 +261,7 @@ NS_ASSUME_NONNULL_BEGIN
     
     // superview.trailingMargin >= trailingView.trailing + margin
     NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:marginAttribute relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.trailingView attribute:self.majorTrailingAttribute multiplier:1.0 constant:self.majorTrailingMargin];
+    constraint.priority = self.marginsPriority;
     constraint.active = true;
     
     self.majorTrailingMarginConstraint = constraint;
@@ -276,6 +281,7 @@ NS_ASSUME_NONNULL_BEGIN
     for (UIView *subview in self.views) {
         //subview.leading >= superview.leadingMargin + margin
         [constraints addObject:[NSLayoutConstraint constraintWithItem:subview attribute:self.minorLeadingAttribute relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.superview attribute:marginAttribute multiplier:1.0 constant:self.minorLeadingMargin]];
+        constraints.lastObject.priority = self.marginsPriority;
         constraints.lastObject.active = true;
     }
     
@@ -297,6 +303,7 @@ NS_ASSUME_NONNULL_BEGIN
     for (UIView *subview in self.views) {
         //superview.trailing >= subview.trailingMargin + margin
         [constraints addObject:[NSLayoutConstraint constraintWithItem:self.superview attribute:self.minorTrailingAttribute relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:subview attribute:marginAttribute multiplier:1.0 constant:self.minorTrailingMargin]];
+        constraints.lastObject.priority = self.marginsPriority;
         constraints.lastObject.active = true;
     }
     
@@ -352,6 +359,19 @@ NS_ASSUME_NONNULL_BEGIN
 {
     if (_layoutMarginsRelativeArrangement != layoutMarginsRelativeArrangement) {
         _layoutMarginsRelativeArrangement = layoutMarginsRelativeArrangement;
+        
+        [self rebuildMajorLeadingConstraint];
+        [self rebuildMajorTrailingConstraint];
+        [self rebuildMinorLeadingConstraints];
+        [self rebuildMinorTrailingConstraints];
+    }
+    return self;
+}
+
+- (instancetype)setMarginsPriority:(UILayoutPriority)priority
+{
+    if (_marginsPriority != priority) {
+        _marginsPriority = priority;
         
         [self rebuildMajorLeadingConstraint];
         [self rebuildMajorTrailingConstraint];
