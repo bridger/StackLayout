@@ -58,14 +58,13 @@ NS_ASSUME_NONNULL_BEGIN
     objc_setAssociatedObject(self, @selector(sl_installedLayouts), layouts, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
+static dispatch_once_t swizzleOnceToken;
 - (void)installStackLayout:(SLStackLayoutBase *)stackLayout
 {
-    NSArray *layouts = [self sl_installedLayouts];
-    
-    if (!layouts) {
+    dispatch_once(&swizzleOnceToken, ^{
         // This is the first stack layout that has been installed. We are going to swizzle out the layoutSubviews
         // method to give the layouts a hook.
-        Class class = [self class];
+        Class class = [UIView class];
         
         SEL originalSelector = @selector(layoutSubviews);
         SEL swizzledSelector = @selector(sl_layoutSubviews);
@@ -86,9 +85,9 @@ NS_ASSUME_NONNULL_BEGIN
         } else {
             method_exchangeImplementations(originalMethod, swizzledMethod);
         }
-        
-        layouts = [NSArray array];
-    }
+    });
+    
+    NSArray *layouts = [self sl_installedLayouts] ?: [NSArray array];
     layouts = [layouts arrayByAddingObject:stackLayout];
     
     [self sl_setInstalledLayouts:layouts];
