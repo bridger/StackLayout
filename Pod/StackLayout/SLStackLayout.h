@@ -37,7 +37,7 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 - (instancetype)setHorizontalAlignment:(SLAlignment)alignment;
 @property (nonatomic, readonly) SLAlignment horizontalAlignment;
 
-/* This is the priority that all alignment constraints use. It defaults to UILayoutPriorityDefaultHigh. This
+/* This is the priority that all alignment constraints use. It defaults to UILayoutPriorityDefaultHigh + 10. This
  is so views will pull in the aligned direction, but will not override margin constraints (which are required).
  */
 - (instancetype)setAlignmentPriority:(UILayoutPriority)priority;

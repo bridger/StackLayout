@@ -189,7 +189,7 @@ NS_ASSUME_NONNULL_BEGIN
         
         // The alignment priority is high, but not required. This is so it very strongly tries to align,
         // but won't override the margin constraints (which are required)
-        _alignmentPriority = UILayoutPriorityDefaultHigh;
+        _alignmentPriority = UILayoutPriorityDefaultHigh + 10;
         _spacingPriority = UILayoutPriorityRequired;
         _adjustsPreferredMaxLayoutWidthOnSubviews = YES;
         
