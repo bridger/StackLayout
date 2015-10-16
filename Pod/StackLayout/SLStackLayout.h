@@ -23,10 +23,11 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 
 #pragma mark Alignment
 /*
- The alignment pulls subviews to the edges of the superview with a certain priority. Use the fill alignment
+ The alignment pulls subviews to be flush with the margin constraints. Use the fill alignment
  to duplicate behavior of UIStackView.
- When you use the center alignment for the major axis of alignment, two hidden subviews are added to either
- side of the subviews to enforce the centering.
+ When centering is used it respects the centeringAlignmentPriority.
+ When you use the center alignment for the major axis of alignment, a hidden subview is added to
+ help with the centering.
  */
 
 // Defaults to SLAlignmentNone, which creates no constraints
@@ -37,11 +38,12 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 - (instancetype)setHorizontalAlignment:(SLAlignment)alignment;
 @property (nonatomic, readonly) SLAlignment horizontalAlignment;
 
-/* This is the priority that all alignment constraints use. It defaults to UILayoutPriorityDefaultHigh + 10. This
- is so views will pull in the aligned direction, but will not override margin constraints (which are required).
+/* 
+ This is the priority for constraints used for centering views with SLAlignmentCenter. It defaults to
+ UILayoutPriorityDefaultHigh + 10.
  */
-- (instancetype)setAlignmentPriority:(UILayoutPriority)priority;
-@property (nonatomic, readonly) UILayoutPriority alignmentPriority;
+- (instancetype)setCenteringAlignmentPriority:(UILayoutPriority)priority;
+@property (nonatomic, readonly) UILayoutPriority centeringAlignmentPriority;
 
 #pragma mark Spacing
 /*
