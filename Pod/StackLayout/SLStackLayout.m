@@ -53,8 +53,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSArray<NSLayoutConstraint *> *minorTrailingMarginConstraints;
 
 @property (nonatomic, nullable) NSArray<NSLayoutConstraint *> *majorAlignmentConstraints;
-@property (nonatomic, nullable) NSArray<UIView *> *majorAlignmentHelperViews;
-@property (nonatomic) NSArray<NSLayoutConstraint *> *minorAlignmentConstraints;
+@property (nonatomic, nullable) UIView *majorAlignmentHelperView;
+@property (nonatomic, nullable) NSArray<NSLayoutConstraint *> *minorAlignmentConstraints;
 
 @property (nonatomic) CGFloat majorLeadingMargin;
 @property (nonatomic) CGFloat majorTrailingMargin;
@@ -75,8 +75,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) CGFloat spacing;
 - (instancetype)setSpacingPriority:(UILayoutPriority)priority;
 @property (nonatomic, readonly) UILayoutPriority spacingPriority;
-- (instancetype)setAlignmentPriority:(UILayoutPriority)priority;
-@property (nonatomic, readonly) UILayoutPriority alignmentPriority;
+- (instancetype)setCenteringAlignmentPriority:(UILayoutPriority)priority;
+@property (nonatomic, readonly) UILayoutPriority centeringAlignmentPriority;
 - (instancetype)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement;
 @property(nonatomic, getter=isLayoutMarginsRelativeArrangement, readonly) BOOL layoutMarginsRelativeArrangement;
 - (instancetype)setAdjustsPreferredMaxLayoutWidthOnSubviews:(BOOL)adjustValues;
@@ -191,7 +191,7 @@ NS_ASSUME_NONNULL_BEGIN
         
         // The alignment priority is high, but not required. This is so it very strongly tries to align,
         // but won't override the margin constraints (which are required)
-        _alignmentPriority = UILayoutPriorityDefaultHigh + 10;
+        _centeringAlignmentPriority = UILayoutPriorityDefaultHigh + 10;
         _spacingPriority = UILayoutPriorityRequired;
         _marginsPriority = UILayoutPriorityRequired;
         _adjustsPreferredMaxLayoutWidthOnSubviews = YES;
@@ -242,9 +242,12 @@ NS_ASSUME_NONNULL_BEGIN
     NSLayoutAttribute marginAttribute = (self.isLayoutMarginsRelativeArrangement
                                               ? self.majorLeadingMarginAttribute
                                               : self.majorLeadingAttribute);
+    NSLayoutRelation relation = ((self.majorAlignment == SLAlignmentLeading || self.majorAlignment == SLAlignmentFill)
+                                 ? NSLayoutRelationEqual
+                                 : NSLayoutRelationGreaterThanOrEqual);
     
     // leadingView.leading >= superview.leadingMargin + margin
-    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.leadingView attribute:self.majorLeadingAttribute relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.superview attribute:marginAttribute multiplier:1.0 constant:self.majorLeadingMargin];
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.leadingView attribute:self.majorLeadingAttribute relatedBy:relation toItem:self.superview attribute:marginAttribute multiplier:1.0 constant:self.majorLeadingMargin];
     constraint.priority = self.marginsPriority;
     constraint.active = true;
     
@@ -258,9 +261,12 @@ NS_ASSUME_NONNULL_BEGIN
     NSLayoutAttribute marginAttribute = (self.isLayoutMarginsRelativeArrangement
                                               ? self.majorTrailingMarginAttribute
                                               : self.majorTrailingAttribute);
+    NSLayoutRelation relation = ((self.majorAlignment == SLAlignmentTrailing || self.majorAlignment == SLAlignmentFill)
+                                 ? NSLayoutRelationEqual
+                                 : NSLayoutRelationGreaterThanOrEqual);
     
     // superview.trailingMargin >= trailingView.trailing + margin
-    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:marginAttribute relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.trailingView attribute:self.majorTrailingAttribute multiplier:1.0 constant:self.majorTrailingMargin];
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.superview attribute:marginAttribute relatedBy:relation toItem:self.trailingView attribute:self.majorTrailingAttribute multiplier:1.0 constant:self.majorTrailingMargin];
     constraint.priority = self.marginsPriority;
     constraint.active = true;
     
@@ -276,11 +282,14 @@ NS_ASSUME_NONNULL_BEGIN
     NSLayoutAttribute marginAttribute = (self.isLayoutMarginsRelativeArrangement
                                          ? self.minorLeadingMarginAttribute
                                          : self.minorLeadingAttribute);
+    NSLayoutRelation relation = ((self.minorAlignment == SLAlignmentLeading || self.minorAlignment == SLAlignmentFill)
+                                 ? NSLayoutRelationEqual
+                                 : NSLayoutRelationGreaterThanOrEqual);
     
     NSMutableArray<NSLayoutConstraint *> *constraints = [NSMutableArray array];
     for (UIView *subview in self.views) {
         //subview.leading >= superview.leadingMargin + margin
-        [constraints addObject:[NSLayoutConstraint constraintWithItem:subview attribute:self.minorLeadingAttribute relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.superview attribute:marginAttribute multiplier:1.0 constant:self.minorLeadingMargin]];
+        [constraints addObject:[NSLayoutConstraint constraintWithItem:subview attribute:self.minorLeadingAttribute relatedBy:relation toItem:self.superview attribute:marginAttribute multiplier:1.0 constant:self.minorLeadingMargin]];
         constraints.lastObject.priority = self.marginsPriority;
         constraints.lastObject.active = true;
     }
@@ -298,11 +307,14 @@ NS_ASSUME_NONNULL_BEGIN
     NSLayoutAttribute marginAttribute = (self.isLayoutMarginsRelativeArrangement
                                          ? self.minorTrailingMarginAttribute
                                          : self.minorTrailingAttribute);
+    NSLayoutRelation relation = ((self.minorAlignment == SLAlignmentTrailing || self.minorAlignment == SLAlignmentFill)
+                                 ? NSLayoutRelationEqual
+                                 : NSLayoutRelationGreaterThanOrEqual);
     
     NSMutableArray<NSLayoutConstraint *> *constraints = [NSMutableArray array];
     for (UIView *subview in self.views) {
         //superview.trailing >= subview.trailingMargin + margin
-        [constraints addObject:[NSLayoutConstraint constraintWithItem:self.superview attribute:self.minorTrailingAttribute relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:subview attribute:marginAttribute multiplier:1.0 constant:self.minorTrailingMargin]];
+        [constraints addObject:[NSLayoutConstraint constraintWithItem:self.superview attribute:self.minorTrailingAttribute relatedBy:relation toItem:subview attribute:marginAttribute multiplier:1.0 constant:self.minorTrailingMargin]];
         constraints.lastObject.priority = self.marginsPriority;
         constraints.lastObject.active = true;
     }
@@ -333,25 +345,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setMajorLeadingMargin:(CGFloat)majorLeadingMargin
 {
+    _majorLeadingMargin = majorLeadingMargin;
     self.majorLeadingMarginConstraint.constant = majorLeadingMargin;
 }
 
 - (void)setMajorTrailingMargin:(CGFloat)majorTrailingMargin
 {
+    _majorTrailingMargin = majorTrailingMargin;
     self.majorTrailingMarginConstraint.constant = majorTrailingMargin;
 }
 
-- (void)setMinorLeadingMargin:(CGFloat)majorLeadingMargin
+- (void)setMinorLeadingMargin:(CGFloat)minorLeadingMargin
 {
+    _minorLeadingMargin = minorLeadingMargin;
     for (NSLayoutConstraint *constraint in self.minorLeadingMarginConstraints) {
-        constraint.constant = majorLeadingMargin;
+        constraint.constant = minorLeadingMargin;
     }
 }
 
-- (void)setMinorTrailingMargin:(CGFloat)majorTrailingMargin
+- (void)setMinorTrailingMargin:(CGFloat)minorTrailingMargin
 {
+    _minorTrailingMargin = minorTrailingMargin;
     for (NSLayoutConstraint *constraint in self.minorTrailingMarginConstraints) {
-        constraint.constant = majorTrailingMargin;
+        constraint.constant = minorTrailingMargin;
     }
 }
 
@@ -387,76 +403,38 @@ NS_ASSUME_NONNULL_BEGIN
         _majorAlignment = majorAlignment;
         
         // We can't change these on the fly so we need to remove them and rebuild them
-        for (NSLayoutConstraint *constraint in self.majorAlignmentConstraints) {
-            constraint.active = false;
-        }
-        for (UIView *helperView in self.majorAlignmentHelperViews) {
-            [helperView removeFromSuperview];
-        }
-        self.majorAlignmentHelperViews = nil;
-        
-        NSMutableArray *constraints = [NSMutableArray array];
-        switch (self.majorAlignment) {
-            case SLAlignmentNone: {
-                // No constraints to make
-                break;
-            }
-            case SLAlignmentLeading: {
-                // leadingView.leading = superview.leading
-                [constraints addObject:[self.leadingView sl_constraintAligningAttribute:self.majorLeadingAttribute withView:self.superview]];
-                
-                break;
-            }
-            case SLAlignmentTrailing: {
-                // superview.trailing = trailingView.trailing
-                [constraints addObject:[self.superview sl_constraintAligningAttribute:self.majorTrailingAttribute withView:self.trailingView]];
-                
-                break;
-            }
-            case SLAlignmentFill: {
-                // Make both the leading and trailing subviews try to hug the edges
-                
-                // leadingView.leading = superview.leading
-                [constraints addObject:[self.leadingView sl_constraintAligningAttribute:self.majorLeadingAttribute withView:self.superview]];
-                // superview.trailing = trailingView.trailing
-                [constraints addObject:[self.superview sl_constraintAligningAttribute:self.majorTrailingAttribute withView:self.trailingView]];
-                break;
-            }
-            case SLAlignmentCenter: {
-                // This one is tricky. We place hidden "helper" views on either side of the subviews and constrain them to have equal widths
-                UIView *helperLeadingView = [[UIView alloc] init];
-                helperLeadingView.translatesAutoresizingMaskIntoConstraints = false;
-                helperLeadingView.hidden = YES;
-                
-                UIView *helperTrailingView = [[UIView alloc] init];
-                helperTrailingView.translatesAutoresizingMaskIntoConstraints = false;
-                helperTrailingView.hidden = YES;
-                
-                [self.superview addSubview:helperLeadingView];
-                [self.superview addSubview:helperTrailingView];
-                
-                // |[helperLeadingView][firstView]
-                [constraints addObject:[helperLeadingView sl_constraintAligningAttribute:self.majorLeadingAttribute withView:self.superview]];
-                [constraints addObject:[helperLeadingView sl_constraintWithSpace:0 followedByView:self.leadingView isHorizontal:self.isHorizontal]];
+        [NSLayoutConstraint deactivateConstraints:self.majorAlignmentConstraints];
+        self.majorAlignmentConstraints = nil;
 
-                // [trailingView][helperTrailingView]|
-                [constraints addObject:[self.trailingView sl_constraintWithSpace:0 followedByView:helperTrailingView isHorizontal:self.isHorizontal]];
-                [constraints addObject:[helperTrailingView sl_constraintAligningAttribute:self.majorTrailingAttribute withView:self.superview]];
-                
-                [constraints addObject:[helperLeadingView sl_constraintAligningAttribute:self.majorSizeAttribute withView:helperTrailingView]];
-                
-                self.majorAlignmentHelperViews = @[helperLeadingView, helperTrailingView];
-                
-                break;
+        [self.majorAlignmentHelperView removeFromSuperview];
+        self.majorAlignmentHelperView = nil;
+
+        // By rebuilding these constraints we make sure they are either >= or ==, depending on the alignment
+        [self rebuildMajorLeadingConstraint];
+        [self rebuildMajorTrailingConstraint];
+        
+        if (self.majorAlignment == SLAlignmentCenter) {
+            // This one is tricky. We need a hidden helper view to encompass the content, then we can center that view
+            
+            UIView *helperView = [[UIView alloc] init];
+            helperView.translatesAutoresizingMaskIntoConstraints = false;
+            helperView.hidden = YES;
+            [self.superview addSubview:helperView];
+            
+            // Tie the helperView's edges to emcompass the whole content, and then center the helperView
+            NSMutableArray<NSLayoutConstraint *> *constraints = [NSMutableArray array];
+            [constraints addObject:[helperView sl_constraintAligningAttribute:self.majorLeadingAttribute withView:self.leadingView]];
+            [constraints addObject:[helperView sl_constraintAligningAttribute:self.majorTrailingAttribute withView:self.trailingView]];
+            
+            [constraints addObject:[helperView sl_constraintAligningAttribute:self.majorCenterAttribute withView:self.superview]];
+            
+            for (NSLayoutConstraint *constraint in constraints) {
+                constraint.priority = self.centeringAlignmentPriority;
             }
+            [NSLayoutConstraint activateConstraints:constraints];
+            self.majorAlignmentConstraints = constraints;
+            self.majorAlignmentHelperView = helperView;
         }
-        for (NSLayoutConstraint *constraint in constraints) {
-            constraint.priority = self.alignmentPriority;
-            constraint.active = YES;
-        }
-        
-        self.majorAlignmentConstraints = constraints;
-        
     }
 }
 
@@ -466,74 +444,40 @@ NS_ASSUME_NONNULL_BEGIN
         _minorAlignment = minorAlignment;
         
         // We can't change these on the fly so we need to remove them and rebuild them
-        for (NSLayoutConstraint *constraint in self.minorAlignmentConstraints) {
-            constraint.active = false;
-        }
+        [NSLayoutConstraint deactivateConstraints:self.minorAlignmentConstraints];
+        self.minorAlignmentConstraints = nil;
         
-        NSMutableArray *constraints = [NSMutableArray array];
-        switch (self.minorAlignment) {
-            case SLAlignmentNone: {
-                // No constraints to make
-                break;
-            }
-            case SLAlignmentLeading: {
-                for (UIView *subview in self.views) {
-                    // subview.leading = superview.leading
-                    [constraints addObject:[subview sl_constraintAligningAttribute:self.minorLeadingAttribute withView:self.superview]];
-                }
-                
-                break;
-            }
-            case SLAlignmentTrailing: {
-                for (UIView *subview in self.views) {
-                    // superview.trailing = subview.trailing
-                    [constraints addObject:[self.superview sl_constraintAligningAttribute:self.minorTrailingAttribute withView:subview]];
-                }
-                
-                break;
-            }
-            case SLAlignmentFill: {
-                // Make both the leading and trailing subviews try to hug the edges
-                
-                for (UIView *subview in self.views) {
-                    // subview.leading = superview.leading
-                    [constraints addObject:[subview sl_constraintAligningAttribute:self.minorLeadingAttribute withView:self.superview]];
-                    // superview.trailing = subview.trailing
-                    [constraints addObject:[self.superview sl_constraintAligningAttribute:self.minorTrailingAttribute withView:subview]];
-                }
-                
-                break;
-            }
-            case SLAlignmentCenter: {
-                for (UIView *subview in self.views) {
-                    // superview.center = subview.center
-                    [constraints addObject:[self.superview sl_constraintAligningAttribute:self.minorCenterAttribute withView:subview]];
-                }
-                
-                break;
-            }
-        }
-        for (NSLayoutConstraint *constraint in constraints) {
-            constraint.priority = self.alignmentPriority;
-            constraint.active = YES;
-        }
+        // By rebuilding these constraints we make sure they are either >= or ==, depending on the alignment
+        [self rebuildMinorLeadingConstraints];
+        [self rebuildMinorTrailingConstraints];
         
-        self.minorAlignmentConstraints = constraints;
-        
+        if (self.minorAlignment == SLAlignmentCenter) {
+            NSMutableArray *constraints = [NSMutableArray array];
+            for (UIView *subview in self.views) {
+                // superview.center = subview.center
+                NSLayoutConstraint *constraint = [self.superview sl_constraintAligningAttribute:self.minorCenterAttribute withView:subview];
+                constraint.priority = self.centeringAlignmentPriority;
+                [constraints addObject:constraint];
+            }
+            [NSLayoutConstraint activateConstraints:constraints];
+            self.minorAlignmentConstraints = constraints;
+        }
     }
 }
 
-- (instancetype)setAlignmentPriority:(UILayoutPriority)alignmentPriority
+- (instancetype)setCenteringAlignmentPriority:(UILayoutPriority)alignmentPriority
 {
-    if (_alignmentPriority != alignmentPriority) {
+    if (_centeringAlignmentPriority != alignmentPriority) {
         // Trigger a rebuild of these constraints by setting and unsetting them
-        SLAlignment majorAlignment = self.majorAlignment;
-        self.majorAlignment = SLAlignmentNone;
-        self.majorAlignment = majorAlignment;
+        if (self.majorAlignment == SLAlignmentCenter) {
+            self.majorAlignment = SLAlignmentNone;
+            self.majorAlignment = SLAlignmentCenter;
+        }
         
-        SLAlignment minorAlignment = self.minorAlignment;
-        self.minorAlignment = SLAlignmentNone;
-        self.minorAlignment = minorAlignment;
+        if (self.minorAlignment == SLAlignmentCenter) {
+            self.minorAlignment = SLAlignmentNone;
+            self.minorAlignment = SLAlignmentCenter;
+        }
     }
     return self;
 }
