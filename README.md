@@ -41,6 +41,20 @@ The above layout takes about 10 constraints usually, which can be a hassle to ma
 [tipView.widthAnchor constraintEqualToConstant:290];
 ```
 
+------
+
+![ToolbarLayout](https://github.com/bridger/StackLayout/blob/master/Images/ToolbarLayout.png?raw=true)
+```
+[[[[toolbar addSubviewsWithHorizontalLayout:@[trashButton]]
+   setHorizontalAlignment:SLAlignmentLeading]
+  setVerticalAlignment:SLAlignmentCenter]
+ setLeadingMargin:15];
+
+[[[toolbar addSubviewsWithHorizontalLayout:@[resizeButton, spotlightButton]]
+  setVerticalAlignment:SLAlignmentCenter]
+ setHorizontalAlignment:SLAlignmentCenter];
+```
+
 
 ## Alignment
 
