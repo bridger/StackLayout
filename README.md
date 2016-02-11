@@ -29,34 +29,45 @@ Coming soon!
 
 You usually want to choose both a vertical and horizontal alignment.
 
-### SLAlignmentFill
-
-Use this when you want the subviews to completely fill the container (exluding space for margins). This can also make the container shrink until it is just big enough to hold the subviews. This is the most common alignment.
-
-### SLAlignmentTop/Bottom/Leading/Trailing
-
-Just as it sounds. The first view will be stuck to the margin of the container view.
-
-### SLAlignmentCenter
-
-This pulls the views to the middle. The layout might create invisible "helper" views to accomplish this. You can control the strength of the centering constraints using `setCenteringPriority:`.
-
-### SLAlignmentNone
-
-This is the default. Without an alignment the views can be layed out anywhere within the margins of the container. This is only useful when you want to align the views relative to something else in the view hierarchy.
+- **SLAlignmentFill**
+  - Use this when you want the subviews to completely fill the container (exluding space for margins). This can also make the container shrink until it is just big enough to hold the subviews. This is the most common alignment.
+- **SLAlignmentTop/Bottom/Leading/Trailing**
+  - Just as it sounds. The view(s) will be stuck to the margin of the container view.
+- **SLAlignmentCenter**
+  - This pulls the views to the middle. The layout might create invisible "helper" views to accomplish this. You can control the strength of the centering constraints using `setCenteringPriority:`.
+- **SLAlignmentNone**
+  - This is the default. Without an alignment the views can be layed out anywhere within the margins of the container. This is only useful when you want to align the views relative to something else in the view hierarchy.
 
  
 ## Rules to Remember
 
 If you are working with a layout where these rules are getting in the way, don't be afraid to just ditch Stack Layout and make the constraints yourself! [PureLayout](https://github.com/PureLayout/PureLayout) or NSLayoutAnchor (iOS 9+) make this easier.
 
+#### Subviews stay within margins
+
 Subviews usually stay entirely within the bounds of the containing view, even if there is no vertical or horizontal alignment set. This is done by the "margin" constraints. You can override this by setting the margins to a negative number or reducing the priority of the margin constraints using `setMarginsPriority:`.
+
+#### Spacing is uniform
 
 Spacing between the views is uniform. If you don't use `setSpacing:`, the space is 0 and subviews will be edge-to-edge. You can override this by reducing the priority of the spacing constraints using `setSpacingPriority` and installing stronger constraints that impose a space. For example `[bottomView.topAnchor constraintEqualToAnchor:topView.bottomAnchor constant:20].active = YES;`
 
+#### Set both vertical and horizontal alignments
+
 If you don't set an aligment, there are many places a subview can end up. In this layout: `[container addSubviewsWithVerticalLayout:@[ redButton, blueButton ]]`, the red and blue button stack can be in the top-left or bottom-right (or anywhere in between) of the container. This can be useful if you want views to be layed out relative to another view in the hierarchy. Generally though, you want to call both `setVerticalAligment:` and `setHorizontalAlignment:`.
 
-StackLayout doesn't govern how big subviews are relative to each other. For example `[container addSubviewsWithHorizontalLayout: @[redView, blueView]] setVertical]`
+#### Subviews need sizing constraints
+
+StackLayout doesn't govern how big subviews are relative to each other. For example, this layout is ambiguous:
+
+```
+[[[container addSubviewsWithVerticalLayout:@[redView, blueView]]
+  setVerticalAlignment:SLAlignmentFill]
+ setHorizontalAlignment:SLAlignmentFill];
+```
+
+Together, redView and blueView fill the container but you need another constraint to say how big they are relative to each other. To make them each take up half of the container you'd need this supplemental constraint: `[redView.heightAnchor constraintEqualToAnchor:blueView.heightAnchor].active = YES;`
+
+Often subviews already have their own size, either from `intrinsicContentSize` or from their own subviews and contraints.
 
 ## Quick Examples
 
