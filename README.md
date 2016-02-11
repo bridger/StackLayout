@@ -4,7 +4,65 @@
 [![License](https://img.shields.io/cocoapods/l/StackLayout.svg?style=flat)](http://cocoapods.org/pods/StackLayout)
 [![Platform](https://img.shields.io/cocoapods/p/StackLayout.svg?style=flat)](http://cocoapods.org/pods/StackLayout)
 
-## Usage
+StackLayout builds on Auto Layout to make some of the most common layouts easier to manage. It creates the constraints that you need and allows you to edit them with semantic method names, like `setTopMargin:` or `setHorizontalAlignment:`. It is similar to UIStackView, but unlike UIStackView it is not a subclass of UIView. It is a layout manager you can use with any view. This has a few advantages:
+
+- Multiple layouts in one view.
+- Less wrapper views in your layout.
+- Compatible with iOS 8+
+
+## Basics
+
+Three labels stacked vertically, hugging the top, with a space between them.
+
+```SLVerticalStackLayout *layout = [[[[container addSubviewsWithVerticalLayout:@[headerLabel, subtitleLabel, bodyLabel]]
+   setVerticalAlignment:SLAlignmentTop]
+  setHorizontalAlignment:SLAlignmentFill]
+ setSpacing:10];```
+ 
+The above layout takes about 10 constraints usually, which can be a hassle to manage. The layout object manages them for you and allows you to easily change them later. You don't need to keep a reference to the layout object if you don't need it though.
+
+## More examples
+
+Coming soon!
+
+## Alignment
+
+You usually want to choose both a vertical and horizontal alignment.
+
+### SLAlignmentFill
+
+Use this when you want the subviews to completely fill the container (exluding space for margins). This can also make the container shrink until it is just big enough to hold the subviews. This is the most common alignment.
+
+### SLAlignmentTop/Bottom/Leading/Trailing
+
+Just as it sounds. The first view will be stuck to the margin of the container view.
+
+### SLAlignmentCenter
+
+This pulls the views to the middle. The layout might create invisible "helper" views to accomplish this. You can control the strength of the centering constraints using `setCenteringPriority:`.
+
+### SLAlignmentNone
+
+This is the default. Without an alignment the views can be layed out anywhere within the margins of the container. This is only useful when you want to align the views relative to something else in the view hierarchy.
+
+ 
+## Rules to Remember
+
+If you are working with a layout where these rules are getting in the way, don't be afraid to just ditch Stack Layout and make the constraints yourself! [PureLayout](https://github.com/PureLayout/PureLayout) or NSLayoutAnchor (iOS 9+) make this easier.
+
+Subviews usually stay entirely within the bounds of the containing view, even if there is no vertical or horizontal alignment set. This is done by the "margin" constraints. You can override this by setting the margins to a negative number or reducing the priority of the margin constraints using `setMarginsPriority:`.
+
+Spacing between the views is uniform. If you don't use `setSpacing:`, the space is 0 and subviews will be edge-to-edge. You can override this by reducing the priority of the spacing constraints using `setSpacingPriority` and installing stronger constraints that impose a space. For example `[bottomView.topAnchor constraintEqualToAnchor:topView.bottomAnchor constant:20].active = YES;`
+
+If you don't set an aligment, there are many places a subview can end up. In this layout: `[container addSubviewsWithVerticalLayout:@[ redButton, blueButton ]]`, the red and blue button stack can be in the top-left or bottom-right (or anywhere in between) of the container. This can be useful if you want views to be layed out relative to another view in the hierarchy. Generally though, you want to call both `setVerticalAligment:` and `setHorizontalAlignment:`.
+
+StackLayout doesn't govern how big subviews are relative to each other. For example `[container addSubviewsWithHorizontalLayout: @[redView, blueView]] setVertical]`
+
+## Quick Examples
+
+
+
+
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
