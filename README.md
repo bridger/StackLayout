@@ -23,7 +23,24 @@ The above layout takes about 10 constraints usually, which can be a hassle to ma
 
 ## More examples
 
-Coming soon!
+
+![WelcomeTipLayout](https://github.com/bridger/StackLayout/blob/master/Images/WelcomeTipLayout.png?raw=true)
+
+```
+[[[[[[[tipView addSubviewsWithVerticalLayout:@[titleLabel,
+                                               bodyLabel,
+                                               tipsButton,
+                                               laterButton]]
+      setVerticalAlignment:SLAlignmentFill]
+     setHorizontalAlignment:SLAlignmentCenter]
+    setHorizontalMargins:46]
+   setTopMargin:34]
+  setBottomMargin:17]
+ setSpacing:28];
+
+[tipView.widthAnchor constraintEqualToConstant:290];
+```
+
 
 ## Alignment
 
