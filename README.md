@@ -38,22 +38,24 @@ You usually want to choose both a vertical and horizontal alignment.
 - **SLAlignmentNone**
   - This is the default. Without an alignment the views can be layed out anywhere within the margins of the container. This is only useful when you want to align the views relative to something else in the view hierarchy.
 
+
+## Spacing
+
+All ajdacent subviews have a "space" constraint for the space between them. In the Auto Layout Visual Format Language, it looks like "[first]-space-[second]". By default, this space is set to 0 so all subviews are edge-to-edge. You can set the space between two adjacent subviews by calling `setSpacing:between:and:`. You can also adjust the spacing constraints at once by calling `setSpacing:`, which will override any other previous `setSpacing:between:and:` calls.
+
+Spacing constraints are required by default, but can be weakened by calling `setSpacingPriority:`.
  
 ## Rules to Remember
 
 If you are working with a layout where these rules are getting in the way, don't be afraid to just ditch Stack Layout and make the constraints yourself! [PureLayout](https://github.com/PureLayout/PureLayout) or NSLayoutAnchor (iOS 9+) make this easier.
 
-#### Subviews stay within margins
-
-Subviews usually stay entirely within the bounds of the containing view, even if there is no vertical or horizontal alignment set. This is done by the "margin" constraints. You can override this by setting the margins to a negative number or reducing the priority of the margin constraints using `setMarginsPriority:`.
-
-#### Spacing is uniform
-
-Spacing between the views is uniform. If you don't use `setSpacing:`, the space is 0 and subviews will be edge-to-edge. You can override this by reducing the priority of the spacing constraints using `setSpacingPriority` and installing stronger constraints that impose a space. For example `[bottomView.topAnchor constraintEqualToAnchor:topView.bottomAnchor constant:20].active = YES;`
-
 #### Set both vertical and horizontal alignments
 
 If you don't set an aligment, there are many places a subview can end up. In this layout: `[container addSubviewsWithVerticalLayout:@[ redButton, blueButton ]]`, the red and blue button stack can be in the top-left or bottom-right (or anywhere in between) of the container. This can be useful if you want views to be layed out relative to another view in the hierarchy. Generally though, you want to call both `setVerticalAligment:` and `setHorizontalAlignment:`.
+
+#### Subviews stay within margins
+
+Subviews usually stay entirely within the bounds of the containing view, even if there is no vertical or horizontal alignment set. This is done by the "margin" constraints. You can override this by setting the margins to a negative number or reducing the priority of the margin constraints using `setMarginsPriority:`.
 
 #### Subviews need sizing constraints
 
@@ -69,13 +71,11 @@ Together, redView and blueView fill the container but you need another constrain
 
 Often subviews already have their own size, either from `intrinsicContentSize` or from their own subviews and contraints.
 
-## Quick Examples
+## Example Project
 
+The example project has not been built yet. If you'd like to contribute, you can build examples in the example project.
 
-
-
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+Clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
 

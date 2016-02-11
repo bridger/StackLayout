@@ -50,7 +50,11 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  All subviews will have a required space between them.
  */
 
-// ...[firstSubview]-spacing-[secondSubview]-spacing-[thirdSubview]...
+/*
+ ...[firstSubview]-spacing-[secondSubview]-spacing-[thirdSubview]...
+ Set the spacing between all pairs of adjacent subviews. This will override any previous calls to
+ setSpacing:between:and:
+ */
 - (instancetype)setSpacing:(CGFloat)spacing;
 @property (nonatomic, readonly) CGFloat spacing;
 
@@ -61,6 +65,13 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 - (instancetype)setSpacingPriority:(UILayoutPriority)priority;
 @property (nonatomic, readonly) UILayoutPriority spacingPriority;
 
+/*
+ Set the space constraint between two adjacent views. [firstView]-spacing-[secondView]
+ If firstView and secondView are not adjacent then this will raise an exception.
+ When setSpacing: is called, any view spacings that were set by this method will be overriden by the
+ space constant.
+ */
+- (instancetype)setSpacing:(CGFloat)spacing between:(UIView *)firstView and:(UIView *)secondView;
 
 #pragma mark Margins
 /*

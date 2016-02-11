@@ -334,12 +334,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)setSpacing:(CGFloat)spacing
 {
-    if (_spacing != spacing) {
-        _spacing = spacing;
-        for (NSLayoutConstraint *spacingConstraint in self.spacingConstraints) {
+    _spacing = spacing;
+    for (NSLayoutConstraint *spacingConstraint in self.spacingConstraints) {
+        spacingConstraint.constant = spacing;
+    }
+    return self;
+}
+
+- (instancetype)setSpacing:(CGFloat)spacing between:(UIView *)firstView and:(UIView *)secondView
+{
+    for (NSLayoutConstraint *spacingConstraint in self.spacingConstraints) {
+        if ((spacingConstraint.firstItem == firstView && spacingConstraint.secondItem == secondView) ||
+            (spacingConstraint.firstItem == secondView && spacingConstraint.secondItem == firstView)) {
+            
+            // Found the correct space constraint!
             spacingConstraint.constant = spacing;
+            return self;
         }
     }
+    // If we reach this point then the correct spacing constraint wasn't found. This means firstView and
+    // secondView weren't adjacent siblings
+    [NSException raise:NSInvalidArgumentException format:@"Can't set space between two views which aren't adjacent siblings."];
     return self;
 }
 
