@@ -55,6 +55,18 @@ The above layout takes about 10 constraints usually, which can be a hassle to ma
  setHorizontalAlignment:SLAlignmentCenter];
 ```
 
+## Most used methods
+
+`setSpacing:`
+
+`setSpacing:between:and:`
+
+`set(Vertical)(Horizontal)Alignment:`
+
+`set(Vertical)(Horizontal)Margins:`
+
+`set(Top)(Bottom)(Leading)(Horizontal)Margin:`
+
 
 ## Alignment
 
