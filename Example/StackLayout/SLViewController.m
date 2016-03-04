@@ -50,12 +50,13 @@
       setSpacingPriority:UILayoutPriorityRequired - 2]
      setSpacing:20]
       setVerticalAlignment:SLAlignmentTop]
-    setSpacing:0 between:red and:green];
+    setSpacing:0 betweenView:red andView:green];
     fakeCell.backgroundColor = [UIColor purpleColor];
     
     [[[self.view addSubviewsWithHorizontalLayout:@[fakeCell]]
      setVerticalAlignment:SLAlignmentCenter]
      setHorizontalAlignment:SLAlignmentFill];
+    
 }
 
 - (void)didReceiveMemoryWarning

@@ -59,7 +59,7 @@ The above layout takes about 10 constraints usually, which can be a hassle to ma
 
 `setSpacing:`
 
-`setSpacing:between:and:`
+`setSpacing:betweenView:andView:`
 
 `set(Vertical)(Horizontal)Alignment:`
 
@@ -84,7 +84,7 @@ You usually want to choose both a vertical and horizontal alignment.
 
 ## Spacing
 
-All ajdacent subviews have a "space" constraint for the space between them. In the Auto Layout Visual Format Language, it looks like "[first]-space-[second]". By default, this space is set to 0 so all subviews are edge-to-edge. You can set the space between two adjacent subviews by calling `setSpacing:between:and:`. You can also adjust the spacing constraints at once by calling `setSpacing:`, which will override any other previous `setSpacing:between:and:` calls.
+All ajdacent subviews have a "space" constraint for the space between them. In the Auto Layout Visual Format Language, it looks like "[first]-space-[second]". By default, this space is set to 0 so all subviews are edge-to-edge. You can set the space between two adjacent subviews by calling `setSpacing:betweenView:andView:`. You can also adjust the spacing constraints at once by calling `setSpacing:`, which will override any other previous `setSpacing:betweenView:andView:` calls.
 
 Spacing constraints are required by default, but can be weakened by calling `setSpacingPriority:`.
  

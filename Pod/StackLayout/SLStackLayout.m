@@ -341,7 +341,7 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (instancetype)setSpacing:(CGFloat)spacing between:(UIView *)firstView and:(UIView *)secondView
+- (instancetype)setSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView
 {
     for (NSLayoutConstraint *spacingConstraint in self.spacingConstraints) {
         if ((spacingConstraint.firstItem == firstView && spacingConstraint.secondItem == secondView) ||
