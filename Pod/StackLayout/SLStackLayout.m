@@ -73,6 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 // These are implemented by this base class but are only exposed in the two subclasses
 - (instancetype)setSpacing:(CGFloat)spacing;
 @property (nonatomic, readonly) CGFloat spacing;
+- (instancetype)setSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView;
 - (instancetype)setSpacingPriority:(UILayoutPriority)priority;
 @property (nonatomic, readonly) UILayoutPriority spacingPriority;
 - (instancetype)setCenteringAlignmentPriority:(UILayoutPriority)priority;
