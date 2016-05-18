@@ -10,22 +10,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (SLHorizontalStackLayout *)addSubviewsWithHorizontalLayout:(NSArray<UIView *> *)subviews
 {
+    return [self addSubviewsWithHorizontalLayout:subviews configurationBlock:nil];
+}
+
+- (SLHorizontalStackLayout *)addSubviewsWithHorizontalLayout:(NSArray<UIView *> *)subviews configurationBlock:(nullable void (^)(SLHorizontalStackLayout *_Nonnull))configurationBlock
+{
     for (UIView *subview in subviews) {
         subview.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:subview];
     }
-    SLHorizontalStackLayout *layout = [[SLHorizontalStackLayout alloc] initWithViews:subviews inSuperview:self];
+    SLHorizontalStackLayout *layout = [[SLHorizontalStackLayout alloc] initWithViews:subviews inSuperview:self configurationBlock:configurationBlock];
     [self installStackLayout:layout];
     return layout;
 }
 
 - (SLVerticalStackLayout *)addSubviewsWithVerticalLayout:(NSArray<UIView *> *)subviews
 {
+    return [self addSubviewsWithVerticalLayout:subviews configurationBlock:nil];
+}
+
+- (SLVerticalStackLayout *)addSubviewsWithVerticalLayout:(NSArray<UIView *> *)subviews configurationBlock:(nullable void (^)(SLVerticalStackLayout *_Nonnull))configurationBlock
+{
     for (UIView *subview in subviews) {
         subview.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:subview];
     }
-    SLVerticalStackLayout *layout = [[SLVerticalStackLayout alloc] initWithViews:subviews inSuperview:self];
+    SLVerticalStackLayout *layout = [[SLVerticalStackLayout alloc] initWithViews:subviews inSuperview:self configurationBlock:configurationBlock];
     [self installStackLayout:layout];
     return layout;
 }

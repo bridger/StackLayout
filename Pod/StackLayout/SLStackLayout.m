@@ -64,26 +64,21 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) SLAlignment majorAlignment;
 @property (nonatomic) SLAlignment minorAlignment;
 
-
+@property (nonatomic) BOOL suppressInitialConstraints;
+@property (nonatomic, nullable) NSMapTable *initialSpaces;
 
 // These are all the public properties that have just been marked readwrite
 @property (readwrite) NSArray<UIView *> *views;
 @property (readwrite, weak, nullable) UIView *superview;
 
 // These are implemented by this base class but are only exposed in the two subclasses
-- (instancetype)setSpacing:(CGFloat)spacing;
-@property (nonatomic, readonly) CGFloat spacing;
+@property (nonatomic) CGFloat spacing;
 - (instancetype)setSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView;
-- (instancetype)setSpacingPriority:(UILayoutPriority)priority;
-@property (nonatomic, readonly) UILayoutPriority spacingPriority;
-- (instancetype)setCenteringAlignmentPriority:(UILayoutPriority)priority;
-@property (nonatomic, readonly) UILayoutPriority centeringAlignmentPriority;
-- (instancetype)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement;
-@property(nonatomic, getter=isLayoutMarginsRelativeArrangement, readonly) BOOL layoutMarginsRelativeArrangement;
-- (instancetype)setAdjustsPreferredMaxLayoutWidthOnSubviews:(BOOL)adjustValues;
-@property (nonatomic, readonly) BOOL adjustsPreferredMaxLayoutWidthOnSubviews;
-- (instancetype)setMarginsPriority:(UILayoutPriority)priority;
-@property (nonatomic, readonly) UILayoutPriority marginsPriority;
+@property (nonatomic) UILayoutPriority spacingPriority;
+@property (nonatomic) UILayoutPriority centeringAlignmentPriority;
+@property(nonatomic, getter=isLayoutMarginsRelativeArrangement) BOOL layoutMarginsRelativeArrangement;
+@property (nonatomic) BOOL adjustsPreferredMaxLayoutWidthOnSubviews;
+@property (nonatomic) UILayoutPriority marginsPriority;
 
 @end
 
@@ -195,19 +190,31 @@ NS_ASSUME_NONNULL_BEGIN
         _centeringAlignmentPriority = UILayoutPriorityDefaultHigh + 10;
         _spacingPriority = UILayoutPriorityRequired;
         _marginsPriority = UILayoutPriorityRequired;
-        _adjustsPreferredMaxLayoutWidthOnSubviews = YES;
+        _adjustsPreferredMaxLayoutWidthOnSubviews = NO;
         
-        [self rebuildSpacingConstraints];
-        [self rebuildMajorLeadingConstraint];
-        [self rebuildMajorTrailingConstraint];
-        [self rebuildMinorLeadingConstraints];
-        [self rebuildMinorTrailingConstraints];
+        self.suppressInitialConstraints = YES;
     }
     return self;
 }
 
+- (void)buildInitialConstraints
+{
+    self.suppressInitialConstraints = NO;
+    
+    [self rebuildSpacingConstraints];
+    self.majorAlignment = self.majorAlignment;
+    self.minorAlignment = self.minorAlignment;
+    
+    [self rebuildMajorLeadingConstraint];
+    [self rebuildMajorTrailingConstraint];
+    [self rebuildMinorLeadingConstraints];
+    [self rebuildMinorTrailingConstraints];
+}
+
 - (void)rebuildSpacingConstraints
 {
+    if (self.suppressInitialConstraints) return;
+    
     for (NSLayoutConstraint *constraint in self.spacingConstraints) {
         constraint.active = false;
     }
@@ -216,8 +223,11 @@ NS_ASSUME_NONNULL_BEGIN
     UIView *previousSubview = nil;
     for (UIView *subview in self.views) {
         if (previousSubview) {
+            NSNumber *initialSpace = [self.initialSpaces objectForKey:previousSubview];
+            CGFloat spacing = initialSpace ? [initialSpace doubleValue] : self.spacing;
+            
             // subview.leading = previousSubview.trailing + spacing
-            NSLayoutConstraint *spaceConstraint = [previousSubview sl_constraintWithSpace:self.spacing followedByView:subview isHorizontal:self.isHorizontal];
+            NSLayoutConstraint *spaceConstraint = [previousSubview sl_constraintWithSpace:spacing followedByView:subview isHorizontal:self.isHorizontal];
             spaceConstraint.priority = self.spacingPriority;
             [spacingConstraints addObject:spaceConstraint];
             spaceConstraint.active = true;
@@ -225,19 +235,22 @@ NS_ASSUME_NONNULL_BEGIN
         previousSubview = subview;
     }
     self.spacingConstraints = spacingConstraints;
+    self.initialSpaces = nil;
 }
 
-- (instancetype)setSpacingPriority:(UILayoutPriority)priority
+- (void)setSpacingPriority:(UILayoutPriority)priority
 {
+    self.initialSpaces = nil;
     if (_spacingPriority != priority) {
         _spacingPriority = priority;
         [self rebuildSpacingConstraints];
     }
-    return self;
 }
 
 - (void)rebuildMajorLeadingConstraint
 {
+    if (self.suppressInitialConstraints) return;
+    
     self.majorLeadingMarginConstraint.active = false;
 
     NSLayoutAttribute marginAttribute = (self.isLayoutMarginsRelativeArrangement
@@ -257,6 +270,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)rebuildMajorTrailingConstraint
 {
+    if (self.suppressInitialConstraints) return;
+    
     self.majorTrailingMarginConstraint.active = false;
     
     NSLayoutAttribute marginAttribute = (self.isLayoutMarginsRelativeArrangement
@@ -276,6 +291,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)rebuildMinorLeadingConstraints
 {
+    if (self.suppressInitialConstraints) return;
+    
     for (NSLayoutConstraint *constraint in self.minorLeadingMarginConstraints) {
         constraint.active = false;
     }
@@ -301,6 +318,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)rebuildMinorTrailingConstraints
 {
+    if (self.suppressInitialConstraints) return;
+    
     for (NSLayoutConstraint *constraint in self.minorTrailingMarginConstraints) {
         constraint.active = false;
     }
@@ -333,30 +352,49 @@ NS_ASSUME_NONNULL_BEGIN
     return self.views.lastObject;
 }
 
-- (instancetype)setSpacing:(CGFloat)spacing
+- (void)setSpacing:(CGFloat)spacing
 {
     _spacing = spacing;
+    self.initialSpaces = nil;
     for (NSLayoutConstraint *spacingConstraint in self.spacingConstraints) {
         spacingConstraint.constant = spacing;
     }
-    return self;
 }
 
-- (instancetype)setSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView
+- (void)setSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView
 {
-    for (NSLayoutConstraint *spacingConstraint in self.spacingConstraints) {
-        if ((spacingConstraint.firstItem == firstView && spacingConstraint.secondItem == secondView) ||
-            (spacingConstraint.firstItem == secondView && spacingConstraint.secondItem == firstView)) {
-            
-            // Found the correct space constraint!
-            spacingConstraint.constant = spacing;
-            return self;
+    if (!self.spacingConstraints) {
+        // We haven't created the space constraints yet so we need a different way to keep track of these
+        // special-case spaces. We find the first view and store the space that should be after that view.
+        UIView *previousView;
+        for (UIView *nextView in self.views) {
+            if ((firstView == previousView && secondView == nextView) ||
+                (firstView == nextView && secondView == previousView)) {
+                
+                // Found it!
+                if (!self.initialSpaces) {
+                    self.initialSpaces = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:self.views.count - 1];
+                }
+                [self.initialSpaces setObject:@(spacing) forKey:previousView];
+                return;
+            }
+            previousView = nextView;
+        }
+        
+    } else {
+        for (NSLayoutConstraint *spacingConstraint in self.spacingConstraints) {
+            if ((spacingConstraint.firstItem == firstView && spacingConstraint.secondItem == secondView) ||
+                (spacingConstraint.firstItem == secondView && spacingConstraint.secondItem == firstView)) {
+                
+                // Found the correct space constraint!
+                spacingConstraint.constant = spacing;
+                return;
+            }
         }
     }
     // If we reach this point then the correct spacing constraint wasn't found. This means firstView and
     // secondView weren't adjacent siblings
     [NSException raise:NSInvalidArgumentException format:@"Can't set space between two views which aren't adjacent siblings."];
-    return self;
 }
 
 - (void)setMajorLeadingMargin:(CGFloat)majorLeadingMargin
@@ -387,7 +425,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-- (instancetype)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement
+- (void)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement
 {
     if (_layoutMarginsRelativeArrangement != layoutMarginsRelativeArrangement) {
         _layoutMarginsRelativeArrangement = layoutMarginsRelativeArrangement;
@@ -397,10 +435,9 @@ NS_ASSUME_NONNULL_BEGIN
         [self rebuildMinorLeadingConstraints];
         [self rebuildMinorTrailingConstraints];
     }
-    return self;
 }
 
-- (instancetype)setMarginsPriority:(UILayoutPriority)priority
+- (void)setMarginsPriority:(UILayoutPriority)priority
 {
     if (_marginsPriority != priority) {
         _marginsPriority = priority;
@@ -410,13 +447,14 @@ NS_ASSUME_NONNULL_BEGIN
         [self rebuildMinorLeadingConstraints];
         [self rebuildMinorTrailingConstraints];
     }
-    return self;
 }
 
 - (void)setMajorAlignment:(SLAlignment)majorAlignment
 {
-    if (_majorAlignment != majorAlignment) {
+    if (_majorAlignment != majorAlignment || !self.minorLeadingMarginConstraints) {
         _majorAlignment = majorAlignment;
+        
+        if (self.suppressInitialConstraints) return;
         
         // We can't change these on the fly so we need to remove them and rebuild them
         [NSLayoutConstraint deactivateConstraints:self.majorAlignmentConstraints];
@@ -456,8 +494,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setMinorAlignment:(SLAlignment)minorAlignment
 {
-    if (_minorAlignment != minorAlignment) {
+    if (_minorAlignment != minorAlignment || !self.minorLeadingMarginConstraints) {
         _minorAlignment = minorAlignment;
+        
+        if (self.suppressInitialConstraints) return;
         
         // We can't change these on the fly so we need to remove them and rebuild them
         [NSLayoutConstraint deactivateConstraints:self.minorAlignmentConstraints];
@@ -481,7 +521,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-- (instancetype)setCenteringAlignmentPriority:(UILayoutPriority)alignmentPriority
+- (void)setCenteringAlignmentPriority:(UILayoutPriority)alignmentPriority
 {
     if (_centeringAlignmentPriority != alignmentPriority) {
         // Trigger a rebuild of these constraints by setting and unsetting them
@@ -495,13 +535,11 @@ NS_ASSUME_NONNULL_BEGIN
             self.minorAlignment = SLAlignmentCenter;
         }
     }
-    return self;
 }
 
-- (instancetype)setAdjustsPreferredMaxLayoutWidthOnSubviews:(BOOL)adjustValues
+- (void)setAdjustsPreferredMaxLayoutWidthOnSubviews:(BOOL)adjustValues
 {
     _adjustsPreferredMaxLayoutWidthOnSubviews = adjustValues;
-    return self;
 }
 
 - (void)subviewsLaidOut
@@ -523,6 +561,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @implementation SLHorizontalStackLayout
+
+- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable)(SLHorizontalStackLayout *))configurationBlock
+{
+    self = [super initWithViews:subviews inSuperview:superview];
+    if (self) {
+        if (configurationBlock) {
+            configurationBlock(self);
+        }
+        [self buildInitialConstraints];
+    }
+    return self;
+}
 
 - (BOOL)isHorizontal
 {
@@ -589,72 +639,64 @@ NS_ASSUME_NONNULL_BEGIN
     return NSLayoutAttributeCenterY;
 }
 
-- (instancetype)setLeadingMargin:(CGFloat)margin
+- (void)setLeadingMargin:(CGFloat)margin
 {
     self.majorLeadingMargin = margin;
-    return self;
 }
 - (CGFloat)leadingMargin
 {
     return self.majorLeadingMargin;
 }
 
-- (instancetype)setTrailingMargin:(CGFloat)margin
+- (void)setTrailingMargin:(CGFloat)margin
 {
     self.majorTrailingMargin = margin;
-    return self;
 }
 - (CGFloat)trailingMargin
 {
     return self.majorTrailingMargin;
 }
-- (instancetype)setHorizontalMargins:(CGFloat)margin
+- (void)setHorizontalMargins:(CGFloat)margin
 {
     self.majorTrailingMargin = margin;
     self.majorLeadingMargin = margin;
-    return self;
 }
 
-- (instancetype)setTopMargin:(CGFloat)margin
+- (void)setTopMargin:(CGFloat)margin
 {
     self.minorLeadingMargin = margin;
-    return self;
 }
 - (CGFloat)topMargin
 {
     return self.minorLeadingMargin;
 }
 
-- (instancetype)setBottomMargin:(CGFloat)margin
+- (void)setBottomMargin:(CGFloat)margin
 {
     self.minorTrailingMargin = margin;
-    return self;
 }
 - (CGFloat)bottomMargin
 {
     return self.minorTrailingMargin;
 }
-- (instancetype)setVerticalMargins:(CGFloat)margin
+- (void)setVerticalMargins:(CGFloat)margin
 {
     self.minorTrailingMargin = margin;
     self.minorLeadingMargin = margin;
-    return self;
 }
 
-- (instancetype)setHorizontalAlignment:(SLAlignment)alignment
+- (void)setHorizontalAlignment:(SLAlignment)alignment
 {
     self.majorAlignment = alignment;
-    return self;
 }
 - (SLAlignment)horizontalAlignment
 {
     return self.majorAlignment;
 }
 
-- (instancetype)setVerticalAlignment:(SLAlignment)alignment
+- (void)setVerticalAlignment:(SLAlignment)alignment
 {
     self.minorAlignment = alignment;
-    return self;
 }
 - (SLAlignment)verticalAlignment
 {
@@ -666,6 +708,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @implementation SLVerticalStackLayout
+
+- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable)(SLVerticalStackLayout *))configurationBlock
+{
+    self = [super initWithViews:subviews inSuperview:superview];
+    if (self) {
+        if (configurationBlock) {
+            configurationBlock(self);
+        }
+        [self buildInitialConstraints];
+    }
+    return self;
+}
 
 - (BOOL)isHorizontal
 {
@@ -732,74 +786,66 @@ NS_ASSUME_NONNULL_BEGIN
     return NSLayoutAttributeCenterX;
 }
 
-- (instancetype)setLeadingMargin:(CGFloat)margin
+- (void)setLeadingMargin:(CGFloat)margin
 {
     self.minorLeadingMargin = margin;
-    return self;
 }
 - (CGFloat)leadingMargin
 {
     return self.minorLeadingMargin;
 }
 
-- (instancetype)setTrailingMargin:(CGFloat)margin
+- (void)setTrailingMargin:(CGFloat)margin
 {
     self.minorTrailingMargin = margin;
-    return self;
 }
 - (CGFloat)trailingMargin
 {
     return self.minorTrailingMargin;
 }
 
-- (instancetype)setHorizontalMargins:(CGFloat)margin
+- (void)setHorizontalMargins:(CGFloat)margin
 {
     self.minorTrailingMargin = margin;
     self.minorLeadingMargin = margin;
-    return self;
 }
 
-- (instancetype)setTopMargin:(CGFloat)margin
+- (void)setTopMargin:(CGFloat)margin
 {
     self.majorLeadingMargin = margin;
-    return self;
 }
 - (CGFloat)topMargin
 {
     return self.majorLeadingMargin;
 }
 
-- (instancetype)setBottomMargin:(CGFloat)margin
+- (void)setBottomMargin:(CGFloat)margin
 {
     self.majorTrailingMargin = margin;
-    return self;
 }
 - (CGFloat)bottomMargin
 {
     return self.majorTrailingMargin;
 }
 
-- (instancetype)setVerticalMargins:(CGFloat)margin
+- (void)setVerticalMargins:(CGFloat)margin
 {
     self.majorTrailingMargin = margin;
     self.majorLeadingMargin = margin;
-    return self;
 }
 
-- (instancetype)setHorizontalAlignment:(SLAlignment)alignment
+- (void)setHorizontalAlignment:(SLAlignment)alignment
 {
     self.minorAlignment = alignment;
-    return self;
 }
 - (SLAlignment)horizontalAlignment
 {
     return self.minorAlignment;
 }
 
-- (instancetype)setVerticalAlignment:(SLAlignment)alignment
+- (void)setVerticalAlignment:(SLAlignment)alignment
 {
     self.majorAlignment = alignment;
-    return self;
 }
 - (SLAlignment)verticalAlignment
 {

@@ -31,19 +31,16 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  */
 
 // Defaults to SLAlignmentNone, which creates no constraints
-- (instancetype)setVerticalAlignment:(SLAlignment)alignment;
-@property (nonatomic, readonly) SLAlignment verticalAlignment;
+@property (nonatomic) SLAlignment verticalAlignment;
 
 // Defaults to SLAlignmentNone, which creates no constraints
-- (instancetype)setHorizontalAlignment:(SLAlignment)alignment;
-@property (nonatomic, readonly) SLAlignment horizontalAlignment;
+@property (nonatomic) SLAlignment horizontalAlignment;
 
 /* 
  This is the priority for constraints used for centering views with SLAlignmentCenter. It defaults to
  UILayoutPriorityDefaultHigh + 10.
  */
-- (instancetype)setCenteringAlignmentPriority:(UILayoutPriority)priority;
-@property (nonatomic, readonly) UILayoutPriority centeringAlignmentPriority;
+@property (nonatomic) UILayoutPriority centeringAlignmentPriority;
 
 #pragma mark Spacing
 /*
@@ -55,23 +52,21 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  Set the spacing between all pairs of adjacent subviews. This will override any previous calls to
  setSpacing:betweenView:andView:
  */
-- (instancetype)setSpacing:(CGFloat)spacing;
-@property (nonatomic, readonly) CGFloat spacing;
+@property (nonatomic) CGFloat spacing;
 
 /* This is the priority that all spacing constraints use. It defaults to required. You can make it non-required
  and add additional constraints to create spacing adjustments.
  Another strategy to create variable spacings is to insert invisible spacer views.
  */
-- (instancetype)setSpacingPriority:(UILayoutPriority)priority;
-@property (nonatomic, readonly) UILayoutPriority spacingPriority;
+@property (nonatomic) UILayoutPriority spacingPriority;
 
 /*
  Set the space constraint between two adjacent views. [firstView]-spacing-[secondView]
  If firstView and secondView are not adjacent then this will raise an exception.
- When setSpacing: is called, any view spacings that were set by this method will be overriden by the
- space constant.
+ When setSpacing: or setSpacingPriority: is called, any view spacings that were set by this method will be 
+ overriden by the space property.
  */
-- (instancetype)setSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView;
+- (void)setSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView;
 
 #pragma mark Margins
 /*
@@ -81,38 +76,32 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  */
 
 // V:|-(>=margin)-[subview]-....
-- (instancetype)setTopMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat topMargin;
+@property (nonatomic) CGFloat topMargin;
 
 // V:...[subview]-(>=margin)-|
-- (instancetype)setBottomMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat bottomMargin;
+@property (nonatomic) CGFloat bottomMargin;
 
 // A convenience to set both top and bottom margins.
-- (instancetype)setVerticalMargins:(CGFloat)margin;
+- (void)setVerticalMargins:(CGFloat)margin;
 
 // H:|-(>=margin)-[subview]
-- (instancetype)setLeadingMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat leadingMargin;
+@property (nonatomic) CGFloat leadingMargin;
 
 // H:[subview]-(>=margin)-|
-- (instancetype)setTrailingMargin:(CGFloat)margin;
-@property (nonatomic, readonly) CGFloat trailingMargin;
+@property (nonatomic) CGFloat trailingMargin;
 
 // A convenience to set both leading and trailing margins.
-- (instancetype)setHorizontalMargins:(CGFloat)margin;
+- (void)setHorizontalMargins:(CGFloat)margin;
 
 /* Uses margin layout attributes from the superview for edge constraints where applicable. This is similar
  to UIStackView's property of the same name.
  Defaults to NO.
  */
-- (instancetype)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement;
-@property(nonatomic, getter=isLayoutMarginsRelativeArrangement, readonly) BOOL layoutMarginsRelativeArrangement;
+@property(nonatomic, getter=isLayoutMarginsRelativeArrangement) BOOL layoutMarginsRelativeArrangement;
 
 /* This is the priority that all margin constraints use. It defaults to required.
  */
-- (instancetype)setMarginsPriority:(UILayoutPriority)priority;
-@property (nonatomic, readonly) UILayoutPriority marginsPriority;
+@property (nonatomic) UILayoutPriority marginsPriority;
 
 #pragma mark Other
 
@@ -120,9 +109,8 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  to the actual layout width when layoutSubviews is called on the superview.
  It is illegal for this to cause a change of height in the containing view, so this property should be turned
  off and managed from a higher view level if that is true. It may trigger an assert in layoutSubviews.
- Defaults to YES.
+ Defaults to NO.
  */
-- (instancetype)setAdjustsPreferredMaxLayoutWidthOnSubviews:(BOOL)adjustValues;
 @property (nonatomic, readonly) BOOL adjustsPreferredMaxLayoutWidthOnSubviews;
 
 @end
@@ -130,16 +118,11 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 
 
 
+/* This class should not be initialized directly! Always use a subclass. */
 @interface SLStackLayoutBase : NSObject
 
 @property (readonly) NSArray<UIView *> *views;
 @property (readonly, weak, nullable) UIView * superview;
-
-/* Instead of using this directly, use UIView's -addSubviewsWithVerticalLayout: or -addSubviewsWithHorizontalLayout:
- If you do call this directly then all subviews should already be added to the superview. The subviews should all have
- translatesAutoresizingMaskIntoConstraints set to false. It must be called on a subclass.
- */
-- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview;
 
 /* This is called when the superview's layoutSubviews is invoked (which depends on method swizzling). This
  is when setPreferredMaxLayoutWidth: will be called on subviews if adjustsPreferredMaxLayoutWidthOnSubviews is
@@ -153,11 +136,23 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 
 @interface SLHorizontalStackLayout : SLStackLayoutBase <SLStackLayout>
 
+/* Instead of using this directly, use UIView's -addSubviewsWithVerticalLayout: or -addSubviewsWithHorizontalLayout:
+ If you do call this directly then all subviews should already be added to the superview. The subviews should all have
+ translatesAutoresizingMaskIntoConstraints set to false.
+*/
+- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable)(SLHorizontalStackLayout *))configurationBlock;
+
 @end
 
 
 
 @interface SLVerticalStackLayout : SLStackLayoutBase <SLStackLayout>
+
+/* Instead of using this directly, use UIView's -addSubviewsWithVerticalLayout: or -addSubviewsWithHorizontalLayout:
+ If you do call this directly then all subviews should already be added to the superview. The subviews should all have
+ translatesAutoresizingMaskIntoConstraints set to false.
+ */
+- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable)(SLVerticalStackLayout *))configurationBlock;
 
 @end
 

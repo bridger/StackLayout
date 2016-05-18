@@ -25,20 +25,6 @@
     blue.backgroundColor = [UIColor blueColor];
     [blue setTitle:@"Blue" forState:UIControlStateNormal];
     
-//    [[[[[[[self.view addSubviewsWithHorizontalLayout:@[red, green]]
-//          setLayoutMarginsRelativeArrangement:YES]
-//         setLeadingMargin:20]
-//        setTrailingMargin:20]
-//       setSpacing:10]
-//      setHorizontalAlignment:SLAlignmentLeading]
-//     setVerticalAlignment:SLAlignmentCenter];
-//    
-//    blue.translatesAutoresizingMaskIntoConstraints = false;
-//    [self.view addSubview:blue];
-//    [blue sl_constraintWithSpace:5 followedByView:green isHorizontal:NO].active = true;
-//    [blue sl_constraintAligningAttribute:NSLayoutAttributeCenterX withView:green].active = true;
-    
-    
     UILabel *wrappingLabel = [[UILabel alloc] init];
     [wrappingLabel setContentCompressionResistancePriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
     wrappingLabel.text = @"This is some really long text that will cause the label to wrap to more than one line. Hopefully, when it wraps the layout will adjust the height accordingly. There is no way to know until you try it, though.";
@@ -46,17 +32,18 @@
     
     UIView *fakeCell = [[UIView alloc] init];
     
-    [[[[[fakeCell addSubviewsWithHorizontalLayout:@[red, green, wrappingLabel, blue]]
-      setSpacingPriority:UILayoutPriorityRequired - 2]
-     setSpacing:20]
-      setVerticalAlignment:SLAlignmentTop]
-    setSpacing:0 betweenView:red andView:green];
+    [fakeCell addSubviewsWithHorizontalLayout:@[red, green, wrappingLabel, blue] configurationBlock:^(SLHorizontalStackLayout *layout) {
+        layout.spacingPriority = UILayoutPriorityRequired - 2;
+        layout.spacing = 20;
+        layout.verticalAlignment = SLAlignmentTop;
+        [layout setSpacing:0 betweenView:red andView:green];
+    }];
     fakeCell.backgroundColor = [UIColor purpleColor];
     
-    [[[self.view addSubviewsWithHorizontalLayout:@[fakeCell]]
-     setVerticalAlignment:SLAlignmentCenter]
-     setHorizontalAlignment:SLAlignmentFill];
-    
+    [self.view addSubviewsWithHorizontalLayout:@[fakeCell] configurationBlock:^(SLHorizontalStackLayout *layout) {
+        layout.verticalAlignment = SLAlignmentCenter;
+        layout.horizontalAlignment = SLAlignmentCenter;
+    }];
 }
 
 - (void)didReceiveMemoryWarning
