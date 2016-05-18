@@ -661,6 +661,10 @@ NS_ASSUME_NONNULL_BEGIN
     self.majorTrailingMargin = margin;
     self.majorLeadingMargin = margin;
 }
+- (CGFloat)horizontalMargins
+{
+    return self.majorLeadingMargin;
+}
 
 - (void)setTopMargin:(CGFloat)margin
 {
@@ -683,6 +687,10 @@ NS_ASSUME_NONNULL_BEGIN
 {
     self.minorTrailingMargin = margin;
     self.minorLeadingMargin = margin;
+}
+- (CGFloat)verticalMargins
+{
+    return self.minorLeadingMargin;
 }
 
 - (void)setHorizontalAlignment:(SLAlignment)alignment
@@ -809,6 +817,10 @@ NS_ASSUME_NONNULL_BEGIN
     self.minorTrailingMargin = margin;
     self.minorLeadingMargin = margin;
 }
+- (CGFloat)horizontalMargins
+{
+    return self.minorLeadingMargin;
+}
 
 - (void)setTopMargin:(CGFloat)margin
 {
@@ -832,6 +844,10 @@ NS_ASSUME_NONNULL_BEGIN
 {
     self.majorTrailingMargin = margin;
     self.majorLeadingMargin = margin;
+}
+- (CGFloat)verticalMargins
+{
+    return self.majorLeadingMargin;
 }
 
 - (void)setHorizontalAlignment:(SLAlignment)alignment

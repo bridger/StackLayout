@@ -81,8 +81,8 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 // V:...[subview]-(>=margin)-|
 @property (nonatomic) CGFloat bottomMargin;
 
-// A convenience to set both top and bottom margins.
-- (void)setVerticalMargins:(CGFloat)margin;
+// A convenience to set both top and bottom margins. The getter should not be invoked.
+@property (nonatomic) CGFloat verticalMargins;
 
 // H:|-(>=margin)-[subview]
 @property (nonatomic) CGFloat leadingMargin;
@@ -90,8 +90,8 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 // H:[subview]-(>=margin)-|
 @property (nonatomic) CGFloat trailingMargin;
 
-// A convenience to set both leading and trailing margins.
-- (void)setHorizontalMargins:(CGFloat)margin;
+// A convenience to set both leading and trailing margins. The getter should not be invoked.
+@property (nonatomic) CGFloat horizontalMargins;
 
 /* Uses margin layout attributes from the superview for edge constraints where applicable. This is similar
  to UIStackView's property of the same name.
