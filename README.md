@@ -14,10 +14,12 @@ StackLayout builds on Auto Layout to make some of the most common layouts easier
 
 Three labels stacked vertically, hugging the top, with a space between them.
 
-```SLVerticalStackLayout *layout = [[[[container addSubviewsWithVerticalLayout:@[headerLabel, subtitleLabel, bodyLabel]]
-   setVerticalAlignment:SLAlignmentTop]
-  setHorizontalAlignment:SLAlignmentFill]
- setSpacing:10];```
+```
+let verticalLayout = container.addSubviewsWithVerticalLayout([headerLabel, subtitleLabel, bodyLabel]) { layout in
+    layout.verticalAlignment = .Top
+    layout.horizontalAlignment = .Fill
+}
+```
  
 The above layout takes about 10 constraints usually, which can be a hassle to manage. The layout object manages them for you and allows you to easily change them later. You don't need to keep a reference to the layout object if you don't need it though.
 
@@ -27,45 +29,43 @@ The above layout takes about 10 constraints usually, which can be a hassle to ma
 ![WelcomeTipLayout](https://github.com/bridger/StackLayout/blob/master/Images/WelcomeTipLayout.png?raw=true)
 
 ```
-[[[[[[[tipView addSubviewsWithVerticalLayout:@[titleLabel,
-                                               bodyLabel,
-                                               tipsButton,
-                                               laterButton]]
-      setVerticalAlignment:SLAlignmentFill]
-     setHorizontalAlignment:SLAlignmentCenter]
-    setHorizontalMargins:46]
-   setTopMargin:34]
-  setBottomMargin:17]
- setSpacing:28];
-
-[tipView.widthAnchor constraintEqualToConstant:290];
+tipView.addSubviewsWithVerticalLayout([titleLabel, bodyLabel, tipsButton, laterButton]) { layout in
+    layout.verticalAlignment = .Fill
+    layout.verticalMargins = 46
+    layout.topMargin = 34
+    layout.bottomMargin = 17
+    layout.spacing = 28
+}
+tipView.widthAnchor.constraintEqualToConstant(290).active = true
 ```
 
 ------
 
 ![ToolbarLayout](https://github.com/bridger/StackLayout/blob/master/Images/ToolbarLayout.png?raw=true)
 ```
-[[[[toolbar addSubviewsWithHorizontalLayout:@[trashButton]]
-   setHorizontalAlignment:SLAlignmentLeading]
-  setVerticalAlignment:SLAlignmentCenter]
- setLeadingMargin:15];
+toolbar.addSubviewsWithHorizontalLayout([trashButton]) { layout in
+    layout.horizontalAlignment = .Leading
+    layout.verticalAlignment = .Center
+    layout.leadingMargin = 15
+}
 
-[[[toolbar addSubviewsWithHorizontalLayout:@[resizeButton, spotlightButton]]
-  setVerticalAlignment:SLAlignmentCenter]
- setHorizontalAlignment:SLAlignmentCenter];
+toolbar.addSubviewsWithHorizontalLayout([resizeButton, spotlightButton]) { layout in
+    layout.verticalAlignment = .Center
+    layout.horizontalAlignment = .Center
+}
 ```
 
-## Most used methods
+## Most used properties
 
-`setSpacing:`
+`spacing`
 
 `setSpacing:betweenView:andView:`
 
-`set(Vertical)(Horizontal)Alignment:`
+`(vertical)(horizontal)Alignment`
 
-`set(Vertical)(Horizontal)Margins:`
+`(vertical)(horizontal)Margins`
 
-`set(Top)(Bottom)(Leading)(Horizontal)Margin:`
+`(top)(bottom)(leading)(horizontal)Margin`
 
 
 ## Alignment
@@ -77,16 +77,16 @@ You usually want to choose both a vertical and horizontal alignment.
 - **SLAlignmentTop/Bottom/Leading/Trailing**
   - Just as it sounds. The view(s) will be stuck to the margin of the container view.
 - **SLAlignmentCenter**
-  - This pulls the views to the middle. The layout might create invisible "helper" views to accomplish this. You can control the strength of the centering constraints using `setCenteringPriority:`.
+  - This pulls the views to the middle. The layout might create invisible "helper" views to accomplish this. You can control the strength of the centering constraints using `centeringPriority`.
 - **SLAlignmentNone**
   - This is the default. Without an alignment the views can be layed out anywhere within the margins of the container. This is only useful when you want to align the views relative to something else in the view hierarchy.
 
 
 ## Spacing
 
-All ajdacent subviews have a "space" constraint for the space between them. In the Auto Layout Visual Format Language, it looks like "[first]-space-[second]". By default, this space is set to 0 so all subviews are edge-to-edge. You can set the space between two adjacent subviews by calling `setSpacing:betweenView:andView:`. You can also adjust the spacing constraints at once by calling `setSpacing:`, which will override any other previous `setSpacing:betweenView:andView:` calls.
+All ajdacent subviews have a "space" constraint for the space between them. In the Auto Layout Visual Format Language, it looks like "[first]-space-[second]". By default, this space is set to 0 so all subviews are edge-to-edge. You can set the space between two adjacent subviews by calling `setSpacing:betweenView:andView:`. You can also adjust the spacing constraints at once by setting `spacing`, which will override any other previous `setSpacing:betweenView:andView:` calls.
 
-Spacing constraints are required by default, but can be weakened by calling `setSpacingPriority:`.
+Spacing constraints are required by default, but can be weakened by setting `spacingPriority`.
  
 ## Rules to Remember
 
@@ -94,20 +94,21 @@ If you are working with a layout where these rules are getting in the way, don't
 
 #### Set both vertical and horizontal alignments
 
-If you don't set an aligment, there are many places a subview can end up. In this layout: `[container addSubviewsWithVerticalLayout:@[ redButton, blueButton ]]`, the red and blue button stack can be in the top-left or bottom-right (or anywhere in between) of the container. This can be useful if you want views to be layed out relative to another view in the hierarchy. Generally though, you want to call both `setVerticalAligment:` and `setHorizontalAlignment:`.
+If you don't set an aligment, there are many places a subview can end up. In this layout: `container.addSubviewsWithVerticalLayout([redButton, blueButton])`, the red and blue button stack can be in the top-left or bottom-right (or anywhere in between) of the container. This can be useful if you want views to be layed out relative to another view in the hierarchy. Generally though, you want to set both `verticalAligment` and `horizontalAlignment`.
 
 #### Subviews stay within margins
 
-Subviews usually stay entirely within the bounds of the containing view, even if there is no vertical or horizontal alignment set. This is done by the "margin" constraints. You can override this by setting the margins to a negative number or reducing the priority of the margin constraints using `setMarginsPriority:`.
+Subviews usually stay entirely within the bounds of the containing view, even if there is no vertical or horizontal alignment set. This is done by the "margin" constraints. You can override this by setting the margins to a negative number or reducing the priority of the margin constraints by setting `marginsPriority`.
 
 #### Subviews need sizing constraints
 
 StackLayout doesn't govern how big subviews are relative to each other. For example, this layout is ambiguous:
 
 ```
-[[[container addSubviewsWithVerticalLayout:@[redView, blueView]]
-  setVerticalAlignment:SLAlignmentFill]
- setHorizontalAlignment:SLAlignmentFill];
+container.addSubviewsWithVerticalLayout([redView, blueView]) { layout in
+    layout.verticalAlignment = .Fill
+    layout.horizontalAlignment = .Fill
+}
 ```
 
 Together, redView and blueView fill the container but you need another constraint to say how big they are relative to each other. To make them each take up half of the container you'd need this supplemental constraint: `[redView.heightAnchor constraintEqualToAnchor:blueView.heightAnchor].active = YES;`
