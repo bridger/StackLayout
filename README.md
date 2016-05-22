@@ -35,7 +35,10 @@ tipView.addSubviewsWithVerticalLayout([titleLabel, bodyLabel, tipsButton, laterB
     layout.topMargin = 34
     layout.bottomMargin = 17
     layout.spacing = 28
+	layout.setSpacing(10, between: titleLabel, and: bodyLabel)
 }
+
+// Constrain the width of the tip view so the text will wrap.
 tipView.widthAnchor.constraintEqualToConstant(290).active = true
 ```
 
