@@ -333,8 +333,8 @@ NS_ASSUME_NONNULL_BEGIN
     
     NSMutableArray<NSLayoutConstraint *> *constraints = [NSMutableArray array];
     for (UIView *subview in self.views) {
-        //superview.trailing >= subview.trailingMargin + margin
-        [constraints addObject:[NSLayoutConstraint constraintWithItem:self.superview attribute:self.minorTrailingAttribute relatedBy:relation toItem:subview attribute:marginAttribute multiplier:1.0 constant:self.minorTrailingMargin]];
+        //superview.trailingMargin >= subview.trailing + margin
+        [constraints addObject:[NSLayoutConstraint constraintWithItem:self.superview attribute:marginAttribute relatedBy:relation toItem:subview attribute:self.minorTrailingAttribute multiplier:1.0 constant:self.minorTrailingMargin]];
         constraints.lastObject.priority = self.marginsPriority;
         constraints.lastObject.active = true;
     }

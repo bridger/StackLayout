@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "StackLayout"
-  s.version          = "0.9.1"
+  s.version          = "0.9.2"
   s.summary          = "An more flexible alternative to UIStackView."
 
 # This description is used to generate tags and improve search results.
@@ -31,9 +31,6 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.source_files = 'Pod/StackLayout/**/*'
-  s.resource_bundles = {
-    'StackLayout' => ['Pod/Assets/*.png']
-  }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
