@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (SLHorizontalStackLayout *)addSubviewsWithHorizontalLayout:(NSArray<UIView *> *)subviews configurationBlock:(nullable void (^)(SLHorizontalStackLayout *_Nonnull))configurationBlock
 {
     for (UIView *subview in subviews) {
+        if (subview.superview) {
+            NSLog(@"Warning: Adding subview which already had a superview. %@", subview);
+        }
         subview.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:subview];
     }
@@ -32,6 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (SLVerticalStackLayout *)addSubviewsWithVerticalLayout:(NSArray<UIView *> *)subviews configurationBlock:(nullable void (^)(SLVerticalStackLayout *_Nonnull))configurationBlock
 {
     for (UIView *subview in subviews) {
+        if (subview.superview) {
+            NSLog(@"Warning: Adding subview which already had a superview. %@", subview);
+        }
         subview.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:subview];
     }
