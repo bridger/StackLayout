@@ -223,14 +223,16 @@ NS_ASSUME_NONNULL_BEGIN
     UIView *previousSubview = nil;
     for (UIView *subview in self.views) {
         if (previousSubview) {
-            NSNumber *initialSpace = [self.initialSpaces objectForKey:previousSubview];
-            CGFloat spacing = initialSpace ? [initialSpace doubleValue] : self.spacing;
-            
-            // subview.leading = previousSubview.trailing + spacing
-            NSLayoutConstraint *spaceConstraint = [previousSubview sl_constraintWithSpace:spacing followedByView:subview isHorizontal:self.isHorizontal];
-            spaceConstraint.priority = self.spacingPriority;
-            [spacingConstraints addObject:spaceConstraint];
-            spaceConstraint.active = true;
+            if (self.spacingPriority > 0) {
+                NSNumber *initialSpace = [self.initialSpaces objectForKey:previousSubview];
+                CGFloat spacing = initialSpace ? [initialSpace doubleValue] : self.spacing;
+
+                // subview.leading = previousSubview.trailing + spacing
+                NSLayoutConstraint *spaceConstraint = [previousSubview sl_constraintWithSpace:spacing followedByView:subview isHorizontal:self.isHorizontal];
+                spaceConstraint.priority = self.spacingPriority;
+                [spacingConstraints addObject:spaceConstraint];
+                spaceConstraint.active = true;
+            }
         }
         previousSubview = subview;
     }
