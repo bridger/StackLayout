@@ -36,7 +36,7 @@
         layout.spacingPriority = UILayoutPriorityRequired - 2;
         layout.spacing = 20;
         layout.verticalAlignment = SLAlignmentTop;
-        [layout setSpacing:0 betweenView:red andView:green];
+        [layout setCustomSpacing:0 betweenView:red andView:green];
     }];
     fakeCell.backgroundColor = [UIColor purpleColor];
     
