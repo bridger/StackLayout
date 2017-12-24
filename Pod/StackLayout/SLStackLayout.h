@@ -140,7 +140,7 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  If you do call this directly then all subviews should already be added to the superview. The subviews should all have
  translatesAutoresizingMaskIntoConstraints set to false.
 */
-- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable)(SLHorizontalStackLayout *))configurationBlock;
+- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable __attribute__((noescape)))(SLHorizontalStackLayout *))configurationBlock;
 
 @end
 
@@ -152,7 +152,7 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  If you do call this directly then all subviews should already be added to the superview. The subviews should all have
  translatesAutoresizingMaskIntoConstraints set to false.
  */
-- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable)(SLVerticalStackLayout *))configurationBlock;
+- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable __attribute__((noescape)))(SLVerticalStackLayout *))configurationBlock;
 
 @end
 
