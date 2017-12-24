@@ -141,6 +141,21 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
 */
 - (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable __attribute__((noescape)))(SLHorizontalStackLayout *))configurationBlock;
 
+/*
+ This sets a margin different than the global topMargin for a specific view.
+ */
+- (void)setCustomTopMargin:(CGFloat)topMargin forView:(UIView *)view;
+
+/*
+ This sets a margin different than the global bottomMargin for a specific view.
+ */
+- (void)setCustomBottomMargin:(CGFloat)bottomMargin forView:(UIView *)view;
+
+/*
+ This sets a custom top and bottom margin for a specific view.
+*/
+- (void)setCustomVerticalMargins:(CGFloat)verticalMargins forView:(UIView *)view;
+
 @end
 
 
@@ -152,6 +167,21 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  translatesAutoresizingMaskIntoConstraints set to false.
  */
 - (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable __attribute__((noescape)))(SLVerticalStackLayout *))configurationBlock;
+
+/*
+ This sets a margin different than the global leadingMargin for a specific view.
+ */
+- (void)setCustomLeadingMargin:(CGFloat)leadingMargin forView:(UIView *)view;
+
+/*
+ This sets a margin different than the global trailingMargin for a specific view.
+ */
+- (void)setCustomTrailingMargin:(CGFloat)trailingMargin forView:(UIView *)view;
+
+/*
+ This sets a custom leading and trailing margin for a specific view.
+ */
+- (void)setCustomHorizontalMargins:(CGFloat)horizontalMargins forView:(UIView *)view;
 
 @end
 

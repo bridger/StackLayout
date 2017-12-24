@@ -52,6 +52,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSArray<NSLayoutConstraint *> *minorLeadingMarginConstraints;
 @property (nonatomic) NSArray<NSLayoutConstraint *> *minorTrailingMarginConstraints;
 
+@property (nonatomic, nullable) NSMapTable *minorLeadingMarginOverrides;
+@property (nonatomic, nullable) NSMapTable *minorTrailingMarginOverrides;
+
 @property (nonatomic, nullable) NSArray<NSLayoutConstraint *> *majorAlignmentConstraints;
 @property (nonatomic, nullable) UIView *majorAlignmentHelperView;
 @property (nonatomic, nullable) NSArray<NSLayoutConstraint *> *minorAlignmentConstraints;
@@ -306,8 +309,15 @@ NS_ASSUME_NONNULL_BEGIN
     
     NSMutableArray<NSLayoutConstraint *> *constraints = [NSMutableArray array];
     for (UIView *subview in self.views) {
+        NSNumber *override = [self.minorLeadingMarginOverrides objectForKey:subview];
+        CGFloat margin = override ? [override doubleValue] : self.minorLeadingMargin;
+
         //subview.leading >= superview.leadingMargin + margin
-        [constraints addObject:[NSLayoutConstraint constraintWithItem:subview attribute:self.minorLeadingAttribute relatedBy:relation toItem:self.superview attribute:marginAttribute multiplier:1.0 constant:self.minorLeadingMargin]];
+        [constraints addObject:[NSLayoutConstraint
+                                constraintWithItem:subview attribute:self.minorLeadingAttribute
+                                relatedBy:relation
+                                toItem:self.superview attribute:marginAttribute
+                                multiplier:1.0 constant:margin]];
         constraints.lastObject.priority = self.marginsPriority;
         constraints.lastObject.active = true;
     }
@@ -333,8 +343,15 @@ NS_ASSUME_NONNULL_BEGIN
     
     NSMutableArray<NSLayoutConstraint *> *constraints = [NSMutableArray array];
     for (UIView *subview in self.views) {
+        NSNumber *override = [self.minorTrailingMarginOverrides objectForKey:subview];
+        CGFloat margin = override ? [override doubleValue] : self.minorTrailingMargin;
+
         //superview.trailingMargin >= subview.trailing + margin
-        [constraints addObject:[NSLayoutConstraint constraintWithItem:self.superview attribute:marginAttribute relatedBy:relation toItem:subview attribute:self.minorTrailingAttribute multiplier:1.0 constant:self.minorTrailingMargin]];
+        [constraints addObject:[NSLayoutConstraint
+                                constraintWithItem:self.superview attribute:marginAttribute
+                                relatedBy:relation
+                                toItem:subview attribute:self.minorTrailingAttribute
+                                multiplier:1.0 constant:margin]];
         constraints.lastObject.priority = self.marginsPriority;
         constraints.lastObject.active = true;
     }
@@ -412,7 +429,23 @@ NS_ASSUME_NONNULL_BEGIN
 {
     _minorLeadingMargin = minorLeadingMargin;
     for (NSLayoutConstraint *constraint in self.minorLeadingMarginConstraints) {
-        constraint.constant = minorLeadingMargin;
+        if (![self.minorLeadingMarginOverrides objectForKey:constraint.firstItem]) {
+            constraint.constant = minorLeadingMargin;
+        }
+    }
+}
+
+- (void)setCustomMinorLeadingMargin:(CGFloat)minorLeadingMargin forView:(UIView *)view
+{
+    if (!self.minorLeadingMarginOverrides) {
+        self.minorLeadingMarginOverrides = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:self.views.count - 1];
+    }
+    [self.minorLeadingMarginOverrides setObject:@(minorLeadingMargin) forKey:view];
+
+    for (NSLayoutConstraint *constraint in self.minorLeadingMarginConstraints) {
+        if (constraint.firstItem == view) {
+            constraint.constant = minorLeadingMargin;
+        }
     }
 }
 
@@ -420,7 +453,23 @@ NS_ASSUME_NONNULL_BEGIN
 {
     _minorTrailingMargin = minorTrailingMargin;
     for (NSLayoutConstraint *constraint in self.minorTrailingMarginConstraints) {
-        constraint.constant = minorTrailingMargin;
+        if (![self.minorTrailingMarginOverrides objectForKey:constraint.secondItem]) {
+            constraint.constant = minorTrailingMargin;
+        }
+    }
+}
+
+- (void)setCustomMinorTrailingMargin:(CGFloat)minorTrailingMargin forView:(UIView *)view
+{
+    if (!self.minorTrailingMarginOverrides) {
+        self.minorTrailingMarginOverrides = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:self.views.count - 1];
+    }
+    [self.minorTrailingMarginOverrides setObject:@(minorTrailingMargin) forKey:view];
+
+    for (NSLayoutConstraint *constraint in self.minorTrailingMarginConstraints) {
+        if (constraint.secondItem == view) {
+            constraint.constant = minorTrailingMargin;
+        }
     }
 }
 
@@ -692,6 +741,22 @@ NS_ASSUME_NONNULL_BEGIN
     return self.minorLeadingMargin;
 }
 
+- (void)setCustomTopMargin:(CGFloat)topMargin forView:(UIView *)view
+{
+    [self setCustomMinorLeadingMargin:topMargin forView:view];
+}
+
+- (void)setCustomBottomMargin:(CGFloat)bottomMargin forView:(UIView *)view
+{
+    [self setCustomMinorTrailingMargin:bottomMargin forView:view];
+}
+
+- (void)setCustomVerticalMargins:(CGFloat)verticalMargins forView:(UIView *)view
+{
+    [self setCustomMinorLeadingMargin:verticalMargins forView:view];
+    [self setCustomMinorTrailingMargin:verticalMargins forView:view];
+}
+
 - (void)setHorizontalAlignment:(SLAlignment)alignment
 {
     self.majorAlignment = alignment;
@@ -847,6 +912,22 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGFloat)verticalMargins
 {
     return self.majorLeadingMargin;
+}
+
+- (void)setCustomLeadingMargin:(CGFloat)leadingMargin forView:(UIView *)view
+{
+    [self setCustomMinorLeadingMargin:leadingMargin forView:view];
+}
+
+- (void)setCustomTrailingMargin:(CGFloat)trailingMargin forView:(UIView *)view
+{
+    [self setCustomMinorTrailingMargin:trailingMargin forView:view];
+}
+
+- (void)setCustomHorizontalMargins:(CGFloat)horizontalMargins forView:(UIView *)view
+{
+    [self setCustomMinorLeadingMargin:horizontalMargins forView:view];
+    [self setCustomMinorTrailingMargin:horizontalMargins forView:view];
 }
 
 - (void)setHorizontalAlignment:(SLAlignment)alignment
