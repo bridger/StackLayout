@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) SLAlignment minorAlignment;
 
 @property (nonatomic) BOOL suppressInitialConstraints;
-@property (nonatomic, nullable) NSMapTable *initialSpaces;
+@property (nonatomic, nullable) NSMapTable *customSpaces;
 
 // These are all the public properties that have just been marked readwrite
 @property (readwrite) NSArray<UIView *> *views;
@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // These are implemented by this base class but are only exposed in the two subclasses
 @property (nonatomic) CGFloat spacing;
-- (void)setSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView;
+- (void)setCustomSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView;
 @property (nonatomic) UILayoutPriority spacingPriority;
 @property (nonatomic) UILayoutPriority centeringAlignmentPriority;
 @property(nonatomic, getter=isLayoutMarginsRelativeArrangement) BOOL layoutMarginsRelativeArrangement;
@@ -224,7 +224,7 @@ NS_ASSUME_NONNULL_BEGIN
     for (UIView *subview in self.views) {
         if (previousSubview) {
             if (self.spacingPriority > 0) {
-                NSNumber *initialSpace = [self.initialSpaces objectForKey:previousSubview];
+                NSNumber *initialSpace = [self.customSpaces objectForKey:previousSubview];
                 CGFloat spacing = initialSpace ? [initialSpace doubleValue] : self.spacing;
 
                 // subview.leading = previousSubview.trailing + spacing
@@ -237,12 +237,10 @@ NS_ASSUME_NONNULL_BEGIN
         previousSubview = subview;
     }
     self.spacingConstraints = spacingConstraints;
-    self.initialSpaces = nil;
 }
 
 - (void)setSpacingPriority:(UILayoutPriority)priority
 {
-    self.initialSpaces = nil;
     if (_spacingPriority != priority) {
         _spacingPriority = priority;
         [self rebuildSpacingConstraints];
@@ -357,46 +355,45 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setSpacing:(CGFloat)spacing
 {
     _spacing = spacing;
-    self.initialSpaces = nil;
     for (NSLayoutConstraint *spacingConstraint in self.spacingConstraints) {
         spacingConstraint.constant = spacing;
     }
 }
 
-- (void)setSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView
+- (void)setCustomSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView
 {
-    if (!self.spacingConstraints) {
-        // We haven't created the space constraints yet so we need a different way to keep track of these
-        // special-case spaces. We find the first view and store the space that should be after that view.
-        UIView *previousView;
-        for (UIView *nextView in self.views) {
-            if ((firstView == previousView && secondView == nextView) ||
-                (firstView == nextView && secondView == previousView)) {
-                
-                // Found it!
-                if (!self.initialSpaces) {
-                    self.initialSpaces = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:self.views.count - 1];
-                }
-                [self.initialSpaces setObject:@(spacing) forKey:previousView];
-                return;
+    // We store these in a map table. We find the first view and store the space that should be after that view.
+    UIView *previousView;
+    BOOL foundMatch = NO;
+    for (UIView *nextView in self.views) {
+        if ((firstView == previousView && secondView == nextView) ||
+            (firstView == nextView && secondView == previousView)) {
+
+            // Found it!
+            if (!self.customSpaces) {
+                self.customSpaces = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:self.views.count - 1];
             }
-            previousView = nextView;
+            [self.customSpaces setObject:@(spacing) forKey:previousView];
+            foundMatch = YES;
         }
-        
-    } else {
-        for (NSLayoutConstraint *spacingConstraint in self.spacingConstraints) {
-            if ((spacingConstraint.firstItem == firstView && spacingConstraint.secondItem == secondView) ||
-                (spacingConstraint.firstItem == secondView && spacingConstraint.secondItem == firstView)) {
-                
-                // Found the correct space constraint!
-                spacingConstraint.constant = spacing;
-                return;
-            }
+        previousView = nextView;
+    }
+    if (!foundMatch) {
+        // If we reach this point then the correct spacing constraint wasn't found. This means firstView and
+        // secondView weren't adjacent siblings
+        [NSException raise:NSInvalidArgumentException format:@"Can't set space between two views which aren't adjacent siblings."];
+    }
+
+    // Adjust any existing constraint
+    for (NSLayoutConstraint *spacingConstraint in self.spacingConstraints) {
+        if ((spacingConstraint.firstItem == firstView && spacingConstraint.secondItem == secondView) ||
+            (spacingConstraint.firstItem == secondView && spacingConstraint.secondItem == firstView)) {
+
+            // Found the correct space constraint!
+            spacingConstraint.constant = spacing;
+            return;
         }
     }
-    // If we reach this point then the correct spacing constraint wasn't found. This means firstView and
-    // secondView weren't adjacent siblings
-    [NSException raise:NSInvalidArgumentException format:@"Can't set space between two views which aren't adjacent siblings."];
 }
 
 - (void)setMajorLeadingMargin:(CGFloat)majorLeadingMargin
