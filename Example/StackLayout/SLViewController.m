@@ -36,9 +36,15 @@
         layout.spacingPriority = UILayoutPriorityRequired - 2;
         layout.spacing = 20;
         layout.verticalAlignment = SLAlignmentTop;
+        layout.horizontalAlignment = SLAlignmentFill;
         [layout setCustomSpacing:0 betweenView:red andView:green];
     }];
     fakeCell.backgroundColor = [UIColor purpleColor];
+
+    // Weakly make the fake cell as small vertically as possibble
+    NSLayoutConstraint *heightSmall = [fakeCell.heightAnchor constraintEqualToConstant:0];
+    heightSmall.priority = 1;
+    heightSmall.active = true;
     
     [self.view addSubviewsWithHorizontalLayout:@[fakeCell] configurationBlock:^(SLHorizontalStackLayout *layout) {
         layout.verticalAlignment = SLAlignmentCenter;

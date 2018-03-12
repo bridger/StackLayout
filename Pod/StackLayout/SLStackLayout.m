@@ -519,6 +519,7 @@ NS_ASSUME_NONNULL_BEGIN
             // This one is tricky. We need a hidden helper view to encompass the content, then we can center that view
             
             UIView *helperView = [[UIView alloc] init];
+            helperView.accessibilityIdentifier = @"SLStackLayoutCenteringHelper";
             helperView.translatesAutoresizingMaskIntoConstraints = false;
             helperView.hidden = YES;
             [self.superview addSubview:helperView];
@@ -529,7 +530,11 @@ NS_ASSUME_NONNULL_BEGIN
             [constraints addObject:[helperView sl_constraintAligningAttribute:self.majorTrailingAttribute withView:self.trailingView]];
             
             [constraints addObject:[helperView sl_constraintAligningAttribute:self.majorCenterAttribute withView:self.superview]];
-            
+
+            // The  minor axis for this view doesn't matter, but we need to set it so that the layout isn't ambiguous
+            [constraints addObject:[helperView sl_constraintAligningAttribute:self.minorLeadingAttribute withView:self.superview]];
+            [constraints addObject:[NSLayoutConstraint constraintWithItem:helperView attribute:self.minorSizeAttribute relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:0.0]];
+
             for (NSLayoutConstraint *constraint in constraints) {
                 constraint.priority = self.centeringAlignmentPriority;
             }
