@@ -615,7 +615,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation SLHorizontalStackLayout
 
-- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable)(SLHorizontalStackLayout *))configurationBlock
+- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (NS_NOESCAPE ^__nullable)(SLHorizontalStackLayout *))configurationBlock
 {
     self = [super initWithViews:subviews inSuperview:superview];
     if (self) {
@@ -786,7 +786,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation SLVerticalStackLayout
 
-- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable)(SLVerticalStackLayout *))configurationBlock
+- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (NS_NOESCAPE ^__nullable)(SLVerticalStackLayout *))configurationBlock
 {
     self = [super initWithViews:subviews inSuperview:superview];
     if (self) {

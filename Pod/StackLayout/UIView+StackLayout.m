@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [self addSubviewsWithHorizontalLayout:subviews configurationBlock:nil];
 }
 
-- (SLHorizontalStackLayout *)addSubviewsWithHorizontalLayout:(NSArray<UIView *> *)subviews configurationBlock:(nullable void (^)(SLHorizontalStackLayout *_Nonnull))configurationBlock
+- (SLHorizontalStackLayout *)addSubviewsWithHorizontalLayout:(NSArray<UIView *> *)subviews configurationBlock:(nullable void (NS_NOESCAPE ^)(SLHorizontalStackLayout *_Nonnull))configurationBlock
 {
     for (UIView *subview in subviews) {
         if (subview.superview) {
@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [self addSubviewsWithVerticalLayout:subviews configurationBlock:nil];
 }
 
-- (SLVerticalStackLayout *)addSubviewsWithVerticalLayout:(NSArray<UIView *> *)subviews configurationBlock:(nullable void (^)(SLVerticalStackLayout *_Nonnull))configurationBlock
+- (SLVerticalStackLayout *)addSubviewsWithVerticalLayout:(NSArray<UIView *> *)subviews configurationBlock:(nullable void (NS_NOESCAPE ^)(SLVerticalStackLayout *_Nonnull))configurationBlock
 {
     for (UIView *subview in subviews) {
         if (subview.superview) {

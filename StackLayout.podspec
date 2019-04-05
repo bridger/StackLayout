@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "StackLayout"
-  s.version          = "1.0.2"
+  s.version          = "1.0.3"
   s.summary          = "An more flexible alternative to UIStackView."
   s.description      = <<-DESC
                        Create Auto Layout constraints to layout views in stack. Alternative to UIStackView which supports multiple different layouts in a single view. Also includes helpful shortcuts for creating NSLayoutConstraints.

@@ -16,10 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 */
 
 - (SLHorizontalStackLayout *)addSubviewsWithHorizontalLayout:(NSArray<UIView *> *)subviews;
-- (SLHorizontalStackLayout *)addSubviewsWithHorizontalLayout:(NSArray<UIView *> *)subviews configurationBlock:(void (^__nullable __attribute__((noescape)))(SLHorizontalStackLayout *layout))configurationBlock;
+- (SLHorizontalStackLayout *)addSubviewsWithHorizontalLayout:(NSArray<UIView *> *)subviews configurationBlock:(void (NS_NOESCAPE ^__nullable)(SLHorizontalStackLayout *layout))configurationBlock;
 
 - (SLVerticalStackLayout *)addSubviewsWithVerticalLayout:(NSArray<UIView *> *)subviews;
-- (SLVerticalStackLayout *)addSubviewsWithVerticalLayout:(NSArray<UIView *> *)subviews configurationBlock:(void (^__nullable __attribute__((noescape)))(SLVerticalStackLayout *layout))configurationBlock;
+- (SLVerticalStackLayout *)addSubviewsWithVerticalLayout:(NSArray<UIView *> *)subviews configurationBlock:(void (NS_NOESCAPE ^__nullable)(SLVerticalStackLayout *layout))configurationBlock;
 
 - (void)removeSubviewsInLayout:(SLStackLayoutBase *)layout;
 

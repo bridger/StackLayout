@@ -139,7 +139,7 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  If you do call this directly then all subviews should already be added to the superview. The subviews should all have
  translatesAutoresizingMaskIntoConstraints set to false.
 */
-- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable __attribute__((noescape)))(SLHorizontalStackLayout *))configurationBlock;
+- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (NS_NOESCAPE ^__nullable)(SLHorizontalStackLayout *))configurationBlock;
 
 /*
  This sets a margin different than the global topMargin for a specific view.
@@ -166,7 +166,7 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  If you do call this directly then all subviews should already be added to the superview. The subviews should all have
  translatesAutoresizingMaskIntoConstraints set to false.
  */
-- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (^__nullable __attribute__((noescape)))(SLVerticalStackLayout *))configurationBlock;
+- (instancetype)initWithViews:(NSArray<UIView *> *)subviews inSuperview:(UIView *)superview configurationBlock:(void (NS_NOESCAPE ^__nullable)(SLVerticalStackLayout *))configurationBlock;
 
 /*
  This sets a margin different than the global leadingMargin for a specific view.
