@@ -110,7 +110,7 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  off and managed from a higher view level if that is true. It may trigger an assert in layoutSubviews.
  Defaults to NO.
  */
-@property (nonatomic, readonly) BOOL adjustsPreferredMaxLayoutWidthOnSubviews;
+@property (nonatomic) BOOL adjustsPreferredMaxLayoutWidthOnSubviews;
 
 @end
 
