@@ -77,6 +77,8 @@ NS_ASSUME_NONNULL_BEGIN
 // These are implemented by this base class but are only exposed in the two subclasses
 @property (nonatomic) CGFloat spacing;
 - (void)setCustomSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView;
+- (void)setCustomSpacing:(CGFloat)spacing beforeView:(UIView *)subview;
+- (void)setCustomSpacing:(CGFloat)spacing afterView:(UIView *)subview;
 @property (nonatomic) UILayoutPriority spacingPriority;
 @property (nonatomic) UILayoutPriority centeringAlignmentPriority;
 @property(nonatomic, getter=isLayoutMarginsRelativeArrangement) BOOL layoutMarginsRelativeArrangement;
@@ -410,6 +412,53 @@ NS_ASSUME_NONNULL_BEGIN
             spacingConstraint.constant = spacing;
             return;
         }
+    }
+}
+
+- (void)setCustomSpacing:(CGFloat)spacing beforeView:(UIView *)subview
+{
+    UIView *previousView = nil;
+    BOOL foundMatch = NO;
+    for (UIView *view in self.views) {
+        if (view == subview) {
+            foundMatch = YES;
+            break;
+        }
+        previousView = view;
+    }
+    if (foundMatch) {
+        if (previousView) {
+            [self setCustomSpacing:spacing betweenView:previousView andView:subview];
+        } else {
+            [NSException raise:NSInvalidArgumentException format:@"Can't set a custom space before the view because there is no preceeding view."];
+        }
+    } else {
+        [NSException raise:NSInvalidArgumentException format:@"Can't set a custom space because the view isn't part of this layout."];
+    }
+}
+
+- (void)setCustomSpacing:(CGFloat)spacing afterView:(UIView *)subview
+{
+    BOOL foundMatch = NO;
+    UIView *nextView = nil;
+    for (UIView *view in self.views) {
+        if (view == subview) {
+            foundMatch = YES;
+            // Loop one more time
+            continue;
+        } else if (foundMatch) {
+            nextView = view;
+            break;
+        }
+    }
+    if (foundMatch) {
+        if (nextView) {
+            [self setCustomSpacing:spacing betweenView:subview andView:nextView];
+        } else {
+            [NSException raise:NSInvalidArgumentException format:@"Can't set a custom space after the view because it is the last view."];
+        }
+    } else {
+        [NSException raise:NSInvalidArgumentException format:@"Can't set a custom space because the view isn't part of this layout."];
     }
 }
 
