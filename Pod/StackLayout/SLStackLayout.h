@@ -67,6 +67,18 @@ typedef NS_ENUM(NSInteger, SLAlignment) {
  */
 - (void)setCustomSpacing:(CGFloat)spacing betweenView:(UIView *)firstView andView:(UIView *)secondView;
 
+/*
+ Set the space constraint between two adjacent views, only specifying the second view. [whateverViewIsBefore]-spacing-[subview].
+ If subview is the first view (so there is no spacing before it) then this will raise an exception.
+*/
+- (void)setCustomSpacing:(CGFloat)spacing beforeView:(UIView *)subview;
+
+/*
+ Set the space constraint between two adjacent views, only specifying the first view. [subview]-spacing-[whateverViewIsAfter].
+ If subview is the last view (so there is no spacing after it) then this will raise an exception.
+*/
+- (void)setCustomSpacing:(CGFloat)spacing afterView:(UIView *)subview;
+
 #pragma mark Margins
 /*
  The margins define a region on the edges of the superview where the subviews will not enter. The subviews
